@@ -1,0 +1,18 @@
+{
+  "name": "take-a-number-app",
+  "version": "1.0.0",
+  "description": "Real-time take a number system using GunDB",
+  "main": "index.html",
+  "type": "module",
+  "scripts": {
+    "start": "serve .",
+    "server": "node js/server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.1",
+    "gun": "^0.2020.1239"
+  },
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
+}
