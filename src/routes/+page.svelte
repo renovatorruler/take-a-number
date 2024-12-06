@@ -1,23 +1,19 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { gun, numbers } from '@res/lib/Db.mjs';
+  import { initNumberManager } from '@res/lib/NumberManager.mjs';
 
   let currentNumber = 0;
+  let takeNumber: () => void;
 
   onMount(() => {
-    numbers.get('current').on((number) => {
-      if (number) {
-        currentNumber = number;
-      }
+    const [store, take] = initNumberManager();
+    takeNumber = take;
+    
+    // Subscribe to the store
+    return store.subscribe(value => {
+      currentNumber = value;
     });
   });
-
-  function takeNumber() {
-    numbers.get('current').once((number) => {
-      const nextNumber = (parseInt(number) || 0) + 1;
-      numbers.get('current').put(nextNumber);
-    });
-  }
 </script>
 
 <div class="container">
@@ -67,3 +63,4 @@
     background-color: #2980b9;
   }
 </style>
+
