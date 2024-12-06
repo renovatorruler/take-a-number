@@ -1,0 +1,24 @@
+{
+  "name": "take-a-number",
+  "sources": [
+    {
+      "dir": "src",
+      "subdirs": true
+    }
+  ],
+  "package-specs": {
+    "module": "esmodule",
+    "in-source": false
+  },
+  "suffix": ".mjs",
+  "bs-dependencies": [
+    "@rescript/core",
+    "rescript-nodejs"
+  ],
+  "warnings": {
+    "error": "+101"
+  },
+  "bsc-flags": [
+    "-open RescriptCore"
+  ]
+}
