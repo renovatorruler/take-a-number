@@ -4,13 +4,13 @@ type props = {
   onTakeNumber: unit => unit
 }
 
-// Component implementation
 type returnType = {
   numberStore: Svelte.store<int>,
   handleTakeNumber: unit => unit,
 }
 
-let make = (~locationId) => {
+let make = (~locationId: string) => {
+  Js.Console.log2("NumberManager.res locationId:", locationId)
   open Svelte
   let numberStore = writable(0)
   let takeNumberRef = ref(None)
@@ -18,8 +18,6 @@ let make = (~locationId) => {
   Svelte.onMount(() => {
     let (store, take) = NumberService.initNumberManager(locationId)
     takeNumberRef := Some(take)
-    
-    // Return unsubscribe function
     Some(store->Svelte.Store.subscribe(n => numberStore->Store.set(n)))
   })
 

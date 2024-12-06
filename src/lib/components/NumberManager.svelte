@@ -1,7 +1,9 @@
 <script lang="ts">
   import { numberManagerComponent } from '@res/lib/components/NumberManager.mjs';
   
-  const { numberStore, handleTakeNumber } = numberManagerComponent();
+  export let locationId;
+  console.log("NumberManager component locationId:", locationId);
+  const { numberStore, handleTakeNumber } = numberManagerComponent(locationId);
 </script>
 
 <div class="number-display">

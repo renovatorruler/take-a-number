@@ -2,8 +2,8 @@
   import { page } from '$app/stores';
   import NumberManager from '$lib/components/NumberManager.svelte';
 
-  // Get the location ID from the URL parameters
   $: locationId = $page.params.id;
+  $: console.log("Page locationId:", locationId);
 </script>
 
 <div class="container">
