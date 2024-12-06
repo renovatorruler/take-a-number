@@ -1,20 +1,38 @@
 <script lang="ts">
   import { numberManagerComponent } from '@res/lib/components/NumberManager.mjs';
+  import ReservedNumber from './ReservedNumber.svelte';
   
   export let locationId;
   console.log("NumberManager component locationId:", locationId);
-  const { numberStore, handleTakeNumber } = numberManagerComponent(locationId);
+  const { numberStore, reservedNumberStore, handleTakeNumber, handleRelinquishNumber } = numberManagerComponent(locationId);
 </script>
 
-<div class="number-display">
-  <h2>Current Number</h2>
-  <div class="number">{$numberStore}</div>
-  <button on:click={handleTakeNumber} class="primary-button">
-    Take a Number
-  </button>
+<div class="number-manager">
+  <div class="number-display">
+    <h2>Current Number</h2>
+    <div class="number">{$numberStore}</div>
+    {#if !$reservedNumberStore}
+      <button on:click={handleTakeNumber} class="primary-button">
+        Take a Number
+      </button>
+    {/if}
+  </div>
+
+  {#if $reservedNumberStore}
+    <ReservedNumber 
+      number={$reservedNumberStore} 
+      onRelinquish={handleRelinquishNumber}
+    />
+  {/if}
 </div>
 
 <style>
+  .number-manager {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
   .number-display {
     margin: 40px 0;
     padding: 20px;

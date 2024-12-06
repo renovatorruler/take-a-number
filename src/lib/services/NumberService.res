@@ -54,5 +54,10 @@ let initNumberManager = (locationId) => {
     })
   }
 
-  (numberStore, takeNumber)
+  let relinquishNumber = () => {
+    // Optional: Add any relinquish logic here
+    ()
+  }
+
+  (numberStore, takeNumber, relinquishNumber)
 }
