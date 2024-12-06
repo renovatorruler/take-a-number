@@ -1,6 +1,6 @@
 type gun
 type numbers
-type writable<'a>
+type writable<'a> = Svelte.store<'a>
 
 @module("./db") external gun: gun = "gun"
 @module("./db") external numbers: Gun.t = "numbers"
