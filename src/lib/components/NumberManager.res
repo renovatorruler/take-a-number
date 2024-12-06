@@ -1,4 +1,3 @@
-// Svelte component props type
 type props = {
   currentNumber: int,
   onTakeNumber: unit => unit
@@ -11,12 +10,12 @@ type returnType = {
 }
 
 let make = () => {
-    open Svelte
+  open Svelte
   let numberStore = writable(0)
   let takeNumberRef = ref(None)
 
   Svelte.onMount(() => {
-    let (store, take) = NumberManager.initNumberManager()
+    let (store, take) = NumberService.initNumberManager()
     takeNumberRef := Some(take)
     
     // Return unsubscribe function
@@ -30,12 +29,10 @@ let make = () => {
     }
   }
 
-  let result: returnType = {
+  {
     numberStore,
     handleTakeNumber
   }
-  result
 }
 
-// Add this export
 let numberManagerComponent = make 

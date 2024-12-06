@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { numberManagerComponent } from '@res/lib/components/NumberManagerComponent.mjs';
+  import { numberManagerComponent } from '@res/lib/components/NumberManager.mjs';
   
   const { numberStore, handleTakeNumber } = numberManagerComponent();
 </script>
