@@ -20,10 +20,15 @@ let make = (~locationId: string) => {
   let relinquishNumberRef = ref(None)
 
   Svelte.onMount(() => {
-    let (store, take, relinquish) = NumberService.initNumberManager(locationId)
+    let (gunNumberStore, gunReservedStore, take, relinquish) = NumberService.initNumberManager(locationId)
     takeNumberRef := Some(take)
     relinquishNumberRef := Some(relinquish)
-    Some(store->Svelte.Store.subscribe(n => numberStore->Store.set(n)))
+    let unsub1 = gunNumberStore->Svelte.Store.subscribe(n => numberStore->Store.set(n))
+    let unsub2 = gunReservedStore->Svelte.Store.subscribe(n => reservedNumberStore->Store.set(n))
+    Some(() => {
+      unsub1()
+      unsub2()
+    })
   })
 
   let handleTakeNumber = () => {
