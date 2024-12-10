@@ -19,12 +19,12 @@ let make = (~locationId: string) => {
   let takeNumberRef = ref(None)
   let relinquishNumberRef = ref(None)
 
-  Svelte.onMount(() => {
-    let (gunNumberStore, gunReservedStore, take, relinquish) = NumberService.initNumberManager(locationId)
+  onMount(() => {
+    let (numberStoreGun, reservedStoreGun, take, relinquish) = NumberService.initNumberManager(locationId)
     takeNumberRef := Some(take)
     relinquishNumberRef := Some(relinquish)
-    let unsub1 = gunNumberStore->Svelte.Store.subscribe(n => numberStore->Store.set(n))
-    let unsub2 = gunReservedStore->Svelte.Store.subscribe(n => reservedNumberStore->Store.set(n))
+    let unsub1 = numberStoreGun->Svelte.Store.subscribe(n => numberStore->Svelte.Store.set(n))
+    let unsub2 = reservedStoreGun->Svelte.Store.subscribe(n => reservedNumberStore->Svelte.Store.set(n))
     Some(() => {
       unsub1()
       unsub2()
@@ -32,20 +32,20 @@ let make = (~locationId: string) => {
   })
 
   let handleTakeNumber = () => {
+    Js.Console.log("handleTakeNumber called")
     switch takeNumberRef.contents {
     | Some(take) => {
-        let currentNumber = Svelte.get(numberStore)
-        reservedNumberStore->Svelte.Store.set(Some(currentNumber))
+        Js.Console.log("Calling take()")
         take()
       }
-    | None => ()
+    | None => Js.Console.log("takeNumberRef is None")
     }
   }
 
   let handleRelinquishNumber = () => {
     switch relinquishNumberRef.contents {
     | Some(relinquish) => {
-        reservedNumberStore->Store.set(None)
+        reservedNumberStore->Svelte.Store.set(None)
         relinquish()
       }
     | None => ()

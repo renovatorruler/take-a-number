@@ -1,91 +1,111 @@
+@module("svelte") external onMount: (unit => option<unit => unit>) => unit = "onMount"
+
 @module("../BrowserId") external getBrowserId: unit => string = "get"
 
-type gun
-type numbers
 type writable<'a> = Svelte.store<'a>
 
-@module("../Db") external numbers: Gun.t = "numbers"
 @module("svelte/store") external writable: 'a => writable<'a> = "writable"
 
 @send external set: (writable<'a>, 'a) => unit = "set"
-@send external subscribe: (writable<'a>, 'a => unit) => (unit => unit) = "subscribe"
 
 let initNumberManager = (locationId) => {
   let numberStore = writable(0)
   let reservedNumberStore = writable(None)
   let browserId = getBrowserId()
 
-  // Initialize location data
-  numbers
-  ->Gun.get(locationId)
-  ->Gun.get("current")
-  ->Gun.once(number => {
-    switch number {
-    | None => numbers->Gun.get(locationId)->Gun.get("current")->Gun.put("0")
-    | Some(_) => ()
-    }
-  })
-
-  // Check for existing reservation
-  numbers
-  ->Gun.get(locationId)
-  ->Gun.get("reservations")
-  ->Gun.get(browserId)
-  ->Gun.once(reservation => {
-    switch reservation {
-    | Some(number) => 
-        let num = Belt.Int.fromString(number)->Belt.Option.getWithDefault(0)
-        if num > 0 {
-          reservedNumberStore->set(Some(num))
+  // Subscribe to current number changes immediately
+  switch Db.numbers {
+  | Some(numbers) => {
+      numbers
+      ->Gun.get(locationId)
+      ->Gun.get("current")
+      ->Gun.on(value => {
+        let number = Js.Nullable.toOption(value)
+        switch number {
+        | Some(n) => numberStore->set(Belt.Int.fromString(n)->Belt.Option.getWithDefault(0))
+        | None => numberStore->set(0)
         }
-    | None => ()
-    }
-  })
+      })
+      ->ignore
 
-  // Subscribe to current number changes
-  numbers
-  ->Gun.get(locationId)
-  ->Gun.get("current")
-  ->Gun.on(number => {
-    switch number {
-    | Some(n) => numberStore->set(Belt.Int.fromString(n)->Belt.Option.getWithDefault(0))
-    | None => numberStore->set(0)
+      // Also check for existing reservation
+      numbers
+      ->Gun.get(locationId)
+      ->Gun.get("reservations")
+      ->Gun.get(browserId)
+      ->Gun.on(value => {
+        let number = Js.Nullable.toOption(value)
+        switch number {
+        | Some(n) => {
+            let num = Belt.Int.fromString(n)->Belt.Option.getWithDefault(0)
+            if num > 0 {
+              reservedNumberStore->set(Some(num))
+            }
+          }
+        | None => reservedNumberStore->set(None)
+        }
+      })
+      ->ignore
     }
-  })
+  | None => ()
+  }
 
   let takeNumber = () => {
-    numbers
-    ->Gun.get(locationId)
-    ->Gun.get("current")
-    ->Gun.once(number => {
-      switch number {
-      | Some(n) => {
-          let nextNumber = Belt.Int.fromString(n)->Belt.Option.getWithDefault(0) + 1
-          // Update current number
-          numbers->Gun.get(locationId)->Gun.get("current")->Gun.put(Belt.Int.toString(nextNumber))
-          // Store reservation
+    Js.Console.log("Taking number...")
+    
+    switch Db.numbers {
+    | Some(numbers) => {
+        // Get current number
+        numbers
+        ->Gun.get(locationId)
+        ->Gun.get("current")
+        ->Gun.once(value => {
+          let currentNumber = switch Js.Nullable.toOption(value) {
+          | Some(n) => Belt.Int.fromString(n)->Belt.Option.getWithDefault(0)
+          | None => 0
+          }
+          
+          let nextNumber = currentNumber + 1
+          Js.Console.log2("Next number:", nextNumber)
+
+          // First, reserve the current number for this user
           numbers
           ->Gun.get(locationId)
           ->Gun.get("reservations")
           ->Gun.get(browserId)
+          ->Gun.put(Belt.Int.toString(currentNumber))
+          ->ignore
+
+          // Update local store with current number
+          reservedNumberStore->set(Some(currentNumber))
+
+          // Then increment the current number for next user
+          numbers
+          ->Gun.get(locationId)
+          ->Gun.get("current")
           ->Gun.put(Belt.Int.toString(nextNumber))
-          // Update local store
-          reservedNumberStore->set(Some(nextNumber))
-        }
-      | None => ()
+          ->ignore
+        })
+        ->ignore
       }
-    })
+    | None => Js.Console.log("No Gun instance available")
+    }
   }
 
   let relinquishNumber = () => {
-    // Remove reservation from GunDB
-    numbers
-    ->Gun.get(locationId)
-    ->Gun.get("reservations")
-    ->Gun.get(browserId)
-    ->Gun.put("")
-    // Clear local store
-    reservedNumberStore->set(None)
+    switch Db.numbers {
+    | Some(numbers) => {
+        numbers
+        ->Gun.get(locationId)
+        ->Gun.get("reservations")
+        ->Gun.get(browserId)
+        ->Gun.put("")
+        ->ignore
+        
+        reservedNumberStore->set(None)
+      }
+    | None => ()
+    }
   }
 
   (numberStore, reservedNumberStore, takeNumber, relinquishNumber)
