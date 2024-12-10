@@ -10,7 +10,8 @@ external get: (gunInstance, string) => gun = "get"
 let gun = createGun({
   "peers": ["https://gun-manhattan.herokuapp.com/gun"],
   "localStorage": false,
-  "radisk": false
+  "radisk": false,
+  "file": false
 })
 
 let numbers = get(gun, Config.dbRoot)
