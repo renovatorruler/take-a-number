@@ -9,7 +9,7 @@ type writable<'a> = Svelte.store<'a>
 @send external set: (writable<'a>, 'a) => unit = "set"
 
 let initNumberManager = (locationId) => {
-  let numberStore = writable(0)
+  let numberStore = writable(None)
   let reservedNumberStore = writable(None)
   let browserId = getBrowserId()
 
@@ -22,8 +22,11 @@ let initNumberManager = (locationId) => {
       ->Gun.on(value => {
         let number = Js.Nullable.toOption(value)
         switch number {
-        | Some(n) => numberStore->set(Belt.Int.fromString(n)->Belt.Option.getWithDefault(0))
-        | None => numberStore->set(0)
+        | Some(n) => 
+            Belt.Int.fromString(n)
+            ->Belt.Option.map(num => numberStore->set(Some(num)))
+            ->ignore
+        | None => ()
         }
       })
       ->ignore
@@ -37,12 +40,15 @@ let initNumberManager = (locationId) => {
         let number = Js.Nullable.toOption(value)
         switch number {
         | Some(n) => {
-            let num = Belt.Int.fromString(n)->Belt.Option.getWithDefault(0)
-            if num > 0 {
-              reservedNumberStore->set(Some(num))
-            }
+            Belt.Int.fromString(n)
+            ->Belt.Option.map(num => {
+              if num > 0 {
+                reservedNumberStore->set(Some(num))
+              }
+            })
+            ->ignore
           }
-        | None => reservedNumberStore->set(None)
+        | None => ()
         }
       })
       ->ignore

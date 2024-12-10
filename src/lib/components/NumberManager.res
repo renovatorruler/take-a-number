@@ -1,11 +1,11 @@
 type props = {
   locationId: string,
-  currentNumber: int,
+  currentNumber: option<int>,
   onTakeNumber: unit => unit
 }
 
 type returnType = {
-  numberStore: Svelte.store<int>,
+  numberStore: Svelte.store<option<int>>,
   reservedNumberStore: Svelte.store<option<int>>,
   handleTakeNumber: unit => unit,
   handleRelinquishNumber: unit => unit,
@@ -14,7 +14,7 @@ type returnType = {
 let make = (~locationId: string) => {
   Js.Console.log2("NumberManager.res locationId:", locationId)
   open Svelte
-  let numberStore = writable(0)
+  let numberStore = writable(None)
   let reservedNumberStore = writable(None)
   let takeNumberRef = ref(None)
   let relinquishNumberRef = ref(None)

@@ -10,9 +10,18 @@
 <div class="number-manager">
   <div class="number-display">
     <h2>Current Number</h2>
-    <div class="number">{$numberStore}</div>
+    <div class="number">
+      {#if $numberStore === undefined || $numberStore === null}
+        <div class="loading">Loading...</div>
+      {:else}
+        {$numberStore}
+      {/if}
+    </div>
     {#if !$reservedNumberStore}
-      <button on:click={handleTakeNumber} class="primary-button">
+      <button 
+        on:click={handleTakeNumber} 
+        class="primary-button"
+        disabled={$numberStore === undefined || $numberStore === null}>
         Take a Number
       </button>
     {/if}
@@ -61,5 +70,16 @@
 
   .primary-button:hover {
     background-color: #2980b9;
+  }
+
+  .loading {
+    font-size: 1.5rem;
+    color: #666;
+    font-style: italic;
+  }
+
+  .primary-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
   }
 </style> 
