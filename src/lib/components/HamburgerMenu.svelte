@@ -12,7 +12,12 @@
   </button>
 
   {#if isOpen}
-    <div class="menu-content" transition:slide>
+    <button 
+      class="menu-content" 
+      transition:slide 
+      on:click|self={onToggle}
+      on:keydown|self={e => e.key === 'Escape' && onToggle()}
+      aria-label="Close menu">
       <nav>
         <ul>
           <li><a href="/">Home</a></li>
@@ -20,7 +25,7 @@
           <li><a href="/settings">Settings</a></li>
         </ul>
       </nav>
-    </div>
+    </button>
   {/if}
 </div>
 
@@ -39,7 +44,7 @@
     border: none;
     cursor: pointer;
     padding: 0;
-    z-index: 10;
+    z-index: 100;
   }
 
   .hamburger span {
@@ -50,6 +55,10 @@
     transition: all 0.3s linear;
     position: relative;
     transform-origin: 1px;
+  }
+
+  .hamburger.open span {
+    background: #2c3e50;
   }
 
   .hamburger.open span:first-child {
@@ -112,6 +121,11 @@
       align-items: center;
       justify-content: center;
       background-color: rgba(255, 255, 255, 0.98);
+      cursor: pointer;
+    }
+
+    nav {
+      cursor: default;
     }
 
     nav ul {
@@ -125,6 +139,12 @@
     nav a {
       font-size: 1.2rem;
       padding: 1rem 2rem;
+    }
+
+    .hamburger.open {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
     }
   }
 </style> 

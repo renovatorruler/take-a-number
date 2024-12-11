@@ -7,7 +7,6 @@
 </script>
 
 <div class="container">
-  <h1>Take a Number</h1>
   <NumberManager {locationId} />
 </div>
 

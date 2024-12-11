@@ -16,6 +16,29 @@ let initNumberManager = (locationId) => {
   // Subscribe to current number changes immediately
   switch Db.numbers {
   | Some(numbers) => {
+      // First check if current number exists, if not initialize it
+      numbers
+      ->Gun.get(locationId)
+      ->Gun.get("current")
+      ->Gun.once(value => {
+        switch Js.Nullable.toOption(value) {
+        | None => {
+            // Initialize current number to "0" if it doesn't exist
+            numbers
+            ->Gun.get(locationId)
+            ->Gun.get("current")
+            ->Gun.put("0")
+            ->ignore
+            
+            // Set initial state in store
+            numberStore->set(Some(0))
+          }
+        | Some(_) => ()
+        }
+      })
+      ->ignore
+
+      // Subscribe to changes
       numbers
       ->Gun.get(locationId)
       ->Gun.get("current")
@@ -26,7 +49,7 @@ let initNumberManager = (locationId) => {
             Belt.Int.fromString(n)
             ->Belt.Option.map(num => numberStore->set(Some(num)))
             ->ignore
-        | None => ()
+        | None => numberStore->set(Some(0))  // Default to 0 if no value
         }
       })
       ->ignore
