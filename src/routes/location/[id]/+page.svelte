@@ -1,6 +1,6 @@
 <script>
-  import { page } from '$app/stores';
-  import NumberManager from '$lib/components/NumberManager.svelte';
+  import { page } from "$app/stores";
+  import NumberManager from "$lib/components/NumberManager.svelte";
 
   $: locationId = $page.params.id;
   $: console.log("Page locationId:", locationId);
@@ -17,4 +17,4 @@
     padding: 20px;
     text-align: center;
   }
-</style> 
+</style>

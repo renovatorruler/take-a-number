@@ -1,28 +1,35 @@
 <script lang="ts">
-  import { slide } from 'svelte/transition';
+  import { slide } from "svelte/transition";
   export let isOpen = false;
   export let onToggle: () => void;
 </script>
 
 <div class="menu-container">
-  <button class="hamburger" class:open={isOpen} on:click={onToggle} aria-label="Menu">
+  <button
+    class="hamburger"
+    class:open={isOpen}
+    on:click={onToggle}
+    aria-label="Menu"
+  >
     <span></span>
     <span></span>
     <span></span>
   </button>
 
   {#if isOpen}
-    <button 
-      class="menu-content" 
-      transition:slide 
+    <button
+      class="menu-content"
+      transition:slide
       on:click|self={onToggle}
-      on:keydown|self={e => e.key === 'Escape' && onToggle()}
-      aria-label="Close menu">
+      on:keydown|self={(e) => e.key === "Escape" && onToggle()}
+      aria-label="Close menu"
+    >
       <nav>
         <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/about">About</a></li>
-          <li><a href="/settings">Settings</a></li>
+          <li><a href="/" on:click={onToggle}>Home</a></li>
+          <li><a href="/create" on:click={onToggle}>Create Location</a></li>
+          <li><a href="/about" on:click={onToggle}>About</a></li>
+          <li><a href="/settings" on:click={onToggle}>Settings</a></li>
         </ul>
       </nav>
     </button>
@@ -80,7 +87,7 @@
     background: white;
     padding: 1rem;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     min-width: 200px;
   }
 
@@ -147,4 +154,4 @@
       right: 1rem;
     }
   }
-</style> 
+</style>

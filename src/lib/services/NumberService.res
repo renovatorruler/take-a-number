@@ -29,7 +29,7 @@ type numberManagerError =
 // Define our store type that guarantees valid states
 type numberManagerStore = {
   state: writable<numberManagerState>,
-  dispatch: numberManagerAction => result<unit, numberManagerError>,
+  dispatch: numberManagerAction => promise<result<unit, numberManagerError>>,
 }
 
 let initNumberManager = (~locationId as LocationId(locationId)) => {
@@ -43,17 +43,33 @@ let initNumberManager = (~locationId as LocationId(locationId)) => {
       ->Gun.get(locationId)
       ->Gun.get("reservations")
       ->Gun.get(browserId)
-      ->Gun.once(reservationValue => {
-        let existingReservation =
-          Js.Nullable.toOption(reservationValue)
-          ->Belt.Option.flatMap(Belt.Int.fromString)
-          ->Belt.Option.map(n => NumberValue(n))
+      ->Gun.once(async reservationValue => {
+        let keyPair: SeaService.keyPair = await BrowserId.getKeyPair()
+
+        let existingReservation = await (
+          switch Js.Nullable.toOption(reservationValue) {
+          | None => Promise.resolve(None)
+          | Some(signedValue) => {
+              let verified = await SeaService.verifyData(
+                ~signedData=signedValue,
+                ~publicKey=keyPair.pub,
+              )
+
+              Promise.resolve(
+                switch Js.Nullable.toOption(verified) {
+                | None => None
+                | Some(value) => Belt.Int.fromString(value)->Belt.Option.map(n => NumberValue(n))
+                },
+              )
+            }
+          }
+        )
 
         // Then get current number
         numbers
         ->Gun.get(locationId)
         ->Gun.get("current")
-        ->Gun.once(value => {
+        ->Gun.once(async value => {
           switch Js.Nullable.toOption(value)->Belt.Option.flatMap(Belt.Int.fromString) {
           | None => {
               numbers
@@ -68,14 +84,17 @@ let initNumberManager = (~locationId as LocationId(locationId)) => {
                   reservation: existingReservation,
                 }),
               )
+              ()
             }
-          | Some(current) =>
-            store->set(
-              Ready({
-                currentNumber: NumberValue(current),
-                reservation: existingReservation,
-              }),
-            )
+          | Some(current) => {
+              store->set(
+                Ready({
+                  currentNumber: NumberValue(current),
+                  reservation: existingReservation,
+                }),
+              )
+              ()
+            }
           }
         })
         ->ignore
@@ -105,31 +124,50 @@ let initNumberManager = (~locationId as LocationId(locationId)) => {
       ->ignore
 
       // Handle dispatch actions
-      let dispatch = action => {
+      let dispatch = async action => {
         switch (action, store->Svelte.get) {
         | (TakeNumber, Ready({reservation: Some(_)})) => Error(AlreadyHasNumber)
         | (TakeNumber, Ready({currentNumber: NumberValue(current)})) => {
-            numbers
-            ->Gun.get(locationId)
-            ->Gun.get("current")
-            ->Gun.put(Belt.Int.toString(current + 1))
-            ->ignore
+            let keyPair: SeaService.keyPair = await BrowserId.getKeyPair()
 
-            numbers
-            ->Gun.get(locationId)
-            ->Gun.get("reservations")
-            ->Gun.get(browserId)
-            ->Gun.put(Belt.Int.toString(current))
-            ->ignore
-
-            store->set(
-              Ready({
-                currentNumber: NumberValue(current + 1),
-                reservation: Some(NumberValue(current)),
-              }),
+            // Sign the number with the user's private key
+            let signedNumber = await SeaService.signData(
+              ~data=Belt.Int.toString(current),
+              ~privateKey=keyPair.priv,
             )
 
-            Ok()
+            // Only proceed if we got a valid signed number
+            if signedNumber !== "" {
+              let data = Js.Dict.empty()
+              Js.Dict.set(data, "number", Belt.Int.toString(current))
+              Js.Dict.set(data, "signature", signedNumber)
+              let jsonData = Js.Json.stringify(Obj.magic(data))
+
+              (
+                await Promise.all2((
+                  Promise.resolve({
+                    let ref = numbers->Gun.get(locationId)->Gun.get("current")
+                    ref->Gun.put(Belt.Int.toString(current + 1))->ignore
+                  }),
+                  Promise.resolve({
+                    let ref =
+                      numbers->Gun.get(locationId)->Gun.get("reservations")->Gun.get(browserId)
+                    ref->Gun.put(jsonData)->ignore
+                  }),
+                ))
+              )->ignore
+
+              store->set(
+                Ready({
+                  currentNumber: NumberValue(current + 1),
+                  reservation: Some(NumberValue(current)),
+                }),
+              )
+
+              Ok()
+            } else {
+              Error(DatabaseError)
+            }
           }
         | (RelinquishNumber, Ready({reservation: None})) => Error(NoNumberToRelinquish)
         | (RelinquishNumber, Ready(state)) => {
@@ -151,7 +189,7 @@ let initNumberManager = (~locationId as LocationId(locationId)) => {
     }
   | None => {
       state: store,
-      dispatch: _ => Error(DatabaseError),
+      dispatch: _ => Promise.resolve(Error(DatabaseError)),
     }
   }
 }

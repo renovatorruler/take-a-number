@@ -5,16 +5,21 @@
 type gun
 type gunInstance
 
+// Initialize SEA first
+@module("gun/sea") external sea: {..} = "default"
+
 @module("gun") @new
 external createGun: {..} => gunInstance = "default"
 
 // Create a nullable gun instance
 let gun: option<gunInstance> = if browser {
+  // Initialize SEA first
   let gunInstance = createGun({
     "peers": ["https://gun-manhattan.herokuapp.com/gun"],
     "localStorage": false,
     "radisk": false,
     "file": false,
+    "SEA": sea, // Pass SEA instance directly
   })
   Some(gunInstance)
 } else {
