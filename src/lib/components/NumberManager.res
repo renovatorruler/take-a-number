@@ -3,7 +3,7 @@ open Types
 type props = {
   locationId: locationId,
   currentNumber: option<numberValue>,
-  onTakeNumber: unit => unit
+  onTakeNumber: unit => unit,
 }
 
 type returnType = {
@@ -21,16 +21,34 @@ let make = (~locationId: locationId) => {
   let takeNumberRef = ref(None)
   let relinquishNumberRef = ref(None)
 
+  let convertState = state =>
+    switch state {
+    | NumberService.Loading => None
+    | NumberService.Ready({currentNumber}) => Some(currentNumber)
+    }
+
+  let convertReservation = state =>
+    switch state {
+    | NumberService.Loading => None
+    | NumberService.Ready({reservation}) => reservation
+    }
+
   onMount(() => {
-    let (numberStoreGun, reservedStoreGun, take, relinquish) = NumberService.initNumberManager(locationId)
-    takeNumberRef := Some(take)
-    relinquishNumberRef := Some(relinquish)
-    let unsub1 = numberStoreGun->Svelte.Store.subscribe(n => numberStore->Svelte.Store.set(n))
-    let unsub2 = reservedStoreGun->Svelte.Store.subscribe(n => reservedNumberStore->Svelte.Store.set(n))
-    Some(() => {
-      unsub1()
-      unsub2()
-    })
+    let {state: numberStoreGun, dispatch} = NumberService.initNumberManager(~locationId)
+    takeNumberRef := Some(() => dispatch(TakeNumber))
+    relinquishNumberRef := Some(() => dispatch(RelinquishNumber))
+    let unsub1 =
+      numberStoreGun->Svelte.Store.subscribe(n => numberStore->Svelte.Store.set(convertState(n)))
+    let unsub2 =
+      numberStoreGun->Svelte.Store.subscribe(n =>
+        reservedNumberStore->Svelte.Store.set(convertReservation(n))
+      )
+    Some(
+      () => {
+        unsub1()
+        unsub2()
+      },
+    )
   })
 
   let handleTakeNumber = () => {
@@ -38,9 +56,12 @@ let make = (~locationId: locationId) => {
     switch takeNumberRef.contents {
     | Some(take) => {
         Js.Console.log("Calling take()")
-        take()
+        take()->ignore
       }
-    | None => Js.Console.log("takeNumberRef is None")
+    | None => {
+        Js.Console.log("takeNumberRef is None")
+        Error(NumberService.DatabaseError)->ignore
+      }
     }
   }
 
@@ -48,9 +69,9 @@ let make = (~locationId: locationId) => {
     switch relinquishNumberRef.contents {
     | Some(relinquish) => {
         reservedNumberStore->Svelte.Store.set(None)
-        relinquish()
+        relinquish()->ignore
       }
-    | None => ()
+    | None => Error(NumberService.DatabaseError)->ignore
     }
   }
 
@@ -62,4 +83,4 @@ let make = (~locationId: locationId) => {
   }
 }
 
-let numberManagerComponent = make 
+let numberManagerComponent = make

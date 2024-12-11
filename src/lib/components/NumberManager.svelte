@@ -1,17 +1,25 @@
 <script lang="ts">
-  import { numberManagerComponent } from '@res/lib/components/NumberManager.mjs';
-  import ReservedNumber from './ReservedNumber.svelte';
-  
+  import { numberManagerComponent } from "@res/lib/components/NumberManager.mjs";
+  import ReservedNumber from "./ReservedNumber.svelte";
+
   export let locationId;
   console.log("NumberManager component locationId:", locationId);
-  const { numberStore, reservedNumberStore, handleTakeNumber, handleRelinquishNumber } = numberManagerComponent(locationId);
+  const {
+    numberStore,
+    reservedNumberStore,
+    handleTakeNumber,
+    handleRelinquishNumber,
+  } = numberManagerComponent(locationId);
+
+  // Add debug logging
+  $: console.log("reservedNumberStore value:", $reservedNumberStore);
 </script>
 
 <div class="ticket-machine">
   <div class="ticket-slot">
     {#if $reservedNumberStore}
-      <ReservedNumber 
-        number={$reservedNumberStore} 
+      <ReservedNumber
+        number={$reservedNumberStore}
         onRelinquish={handleRelinquishNumber}
       />
     {/if}
@@ -35,10 +43,11 @@
           {/if}
         </div>
         {#if !$reservedNumberStore}
-          <button 
-            on:click={handleTakeNumber} 
+          <button
+            on:click={handleTakeNumber}
             class="primary-button"
-            disabled={$numberStore === undefined || $numberStore === null}>
+            disabled={$numberStore === undefined || $numberStore === null}
+          >
             Take a Number
           </button>
         {/if}
@@ -52,23 +61,23 @@
     background: #2c3e50;
     padding: 30px;
     border-radius: 15px;
-    box-shadow: 
-      0 10px 20px rgba(0,0,0,0.2),
-      inset 0 -5px 10px rgba(0,0,0,0.3);
+    box-shadow:
+      0 10px 20px rgba(0, 0, 0, 0.2),
+      inset 0 -5px 10px rgba(0, 0, 0, 0.3);
   }
 
   .ticket-slot {
     background: #34495e;
     padding: 10px;
     border-radius: 8px;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
   }
 
   .ticket {
     background: white;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     transform-origin: top center;
     animation: slideIn 0.5s ease-out;
   }
@@ -90,7 +99,7 @@
     height: 8px;
     background: #e9ecef;
     border-radius: 50%;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
   }
 
   .ticket-content {
@@ -109,7 +118,7 @@
     font-weight: bold;
     color: #2c3e50;
     margin: 20px 0;
-    font-family: 'Courier New', monospace;
+    font-family: "Courier New", monospace;
   }
 
   .primary-button {
@@ -121,13 +130,13 @@
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
 
   .primary-button:hover {
     background-color: #2980b9;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 
   .primary-button:active {
@@ -173,4 +182,4 @@
       font-size: 16px;
     }
   }
-</style> 
+</style>

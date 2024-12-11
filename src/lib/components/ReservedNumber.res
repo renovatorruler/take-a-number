@@ -6,4 +6,4 @@ type props = {
 }
 
 @module("./ReservedNumber.svelte")
-external make: props => Svelte.component = "default" 
+external make: props => Svelte.component = "default"
