@@ -1,5 +1,7 @@
+open Types
+
 type props = {
-  number: option<int>,
+  number: option<numberValue>,
   onRelinquish: unit => unit,
 }
 

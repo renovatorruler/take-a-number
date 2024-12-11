@@ -31,7 +31,8 @@ external get: (gunInstance, string) => Gun.t = "get"
 let numbers: option<Gun.t> = switch gun {
   | Some(instance) => {
       Js.Console.log("Creating numbers reference")
-      let nums = get(instance, Config.dbRoot)
+      let Config.DbRootKey(dbRootKey) = Config.dbRoot
+      let nums = get(instance, dbRootKey)
       Js.Console.log2("Numbers instance:", nums)
       Some(nums)
     }

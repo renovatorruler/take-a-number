@@ -8,29 +8,28 @@ type writable<'a> = Svelte.store<'a>
 
 @send external set: (writable<'a>, 'a) => unit = "set"
 
-let initNumberManager = (locationId) => {
+open Types
+
+let initNumberManager = (locationId: locationId) => {
   let numberStore = writable(None)
   let reservedNumberStore = writable(None)
+  let LocationId(locationId) = locationId
   let browserId = getBrowserId()
 
-  // Subscribe to current number changes immediately
   switch Db.numbers {
   | Some(numbers) => {
-      // First check if current number exists, if not initialize it
       numbers
       ->Gun.get(locationId)
       ->Gun.get("current")
       ->Gun.once(value => {
         switch Js.Nullable.toOption(value) {
         | None => {
-            // Initialize current number to "0" if it doesn't exist
             numbers
             ->Gun.get(locationId)
             ->Gun.get("current")
             ->Gun.put("0")
             ->ignore
             
-            // Set initial state in store
             numberStore->set(None)
           }
         | Some(_) => ()
@@ -38,7 +37,6 @@ let initNumberManager = (locationId) => {
       })
       ->ignore
 
-      // Subscribe to changes
       numbers
       ->Gun.get(locationId)
       ->Gun.get("current")
@@ -47,14 +45,13 @@ let initNumberManager = (locationId) => {
         switch number {
         | Some(n) => 
             Belt.Int.fromString(n)
-            ->Belt.Option.map(num => numberStore->set(Some(num)))
+            ->Belt.Option.map(num => numberStore->set(Some(NumberValue(num))))
             ->ignore
         | None => numberStore->set(None)
         }
       })
       ->ignore
 
-      // Also check for existing reservation
       numbers
       ->Gun.get(locationId)
       ->Gun.get("reservations")
@@ -66,7 +63,7 @@ let initNumberManager = (locationId) => {
             Belt.Int.fromString(n)
             ->Belt.Option.map(num => {
               if num > 0 {
-                reservedNumberStore->set(Some(num))
+                reservedNumberStore->set(Some(NumberValue(num)))
               }
             })
             ->ignore
@@ -106,7 +103,7 @@ let initNumberManager = (locationId) => {
               ->Gun.put(Belt.Int.toString(current))
               ->ignore
 
-              reservedNumberStore->set(Some(current))
+              reservedNumberStore->set(Some(NumberValue(current)))
 
               numbers
               ->Gun.get(locationId)

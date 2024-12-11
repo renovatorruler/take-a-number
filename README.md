@@ -9,6 +9,7 @@ A modern, real-time take-a-number system built with GunDB, offering a peer-to-pe
 ## 🚀 Features
 
 ### Core Features
+
 - Real-time number synchronization across all devices
 - Mobile-first, responsive design
 - Offline-first capability
@@ -16,6 +17,7 @@ A modern, real-time take-a-number system built with GunDB, offering a peer-to-pe
 - QR code integration (coming soon)
 
 ### User Features
+
 - Take a new number with one click
 - Clear status indicators (unassigned, waiting, served)
 - Mark yourself as served
@@ -23,12 +25,12 @@ A modern, real-time take-a-number system built with GunDB, offering a peer-to-pe
 - Automatic state persistence across sessions
 
 ### Technical Features
+
 - Peer-to-peer data synchronization using GunDB
 - Local storage support
 - Session management
 - Real-time updates
 - Responsive UI with consistent styling
-
 
 ## Getting Started
 
@@ -63,18 +65,22 @@ Preview the production build:
 ```bash
 npm run preview
 ```
+
 ## 💻 Usage
 
 ### Taking a Number
+
 1. Visit the application URL
 2. Click "Take a Number" button
 3. Your number will be displayed and synchronized across all connected devices
 
 ### Marking as Served
+
 1. When your service is complete, click "Mark as Served"
 2. Your status will update, and you'll be able to take a new number if needed
 
 ### Viewing History
+
 - Your number history is automatically maintained
 - Each entry shows the number, timestamp, and status
 - History persists across sessions
@@ -82,17 +88,21 @@ npm run preview
 ## 🔧 Technical Details
 
 ### State Management
+
 The application manages three primary states:
+
 - `unassigned`: Initial state, no number taken
 - `waiting`: Number assigned, waiting to be served
 - `served`: Service complete
 
 ### Data Persistence
+
 - User data is stored in GunDB with real-time synchronization
 - Local storage is used for user identification
 - History is maintained per user across sessions
 
 ### Styling
+
 - Consistent button styling with hover effects
 - Mobile-first responsive design
 - Clear visual status indicators

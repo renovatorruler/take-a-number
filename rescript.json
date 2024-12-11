@@ -11,14 +11,9 @@
     "in-source": false
   },
   "suffix": ".mjs",
-  "bs-dependencies": [
-    "@rescript/core",
-    "rescript-nodejs"
-  ],
+  "bs-dependencies": ["@rescript/core", "rescript-nodejs"],
   "warnings": {
     "error": "+101"
   },
-  "bsc-flags": [
-    "-open RescriptCore"
-  ]
+  "bsc-flags": ["-open RescriptCore"]
 }

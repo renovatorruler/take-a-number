@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let number: number | null;
+  export let number: { TAG: 0, _0: number } | null;
   export let onRelinquish: () => void;
 </script>
 
@@ -60,7 +60,7 @@
   </div>
   <div class="ticket-content">
     <h2>Your Number</h2>
-    <div class="number">{number ?? 'No number'}</div>
+    <div class="number">{number ? number._0 : 'No number'}</div>
     <button on:click={onRelinquish} class="relinquish-button">
       Relinquish Number
     </button>

@@ -1,2 +1,2 @@
-// Database keys
-let dbRoot = "numbers" 
+@unboxed type dbRootKey = DbRootKey(string)
+let dbRoot = DbRootKey("numbers") 
