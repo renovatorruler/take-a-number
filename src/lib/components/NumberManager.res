@@ -14,7 +14,6 @@ type returnType = {
 }
 
 let make = (~locationId: locationId) => {
-  Js.Console.log2("NumberManager.res locationId:", locationId)
   open Svelte
   let numberStore = writable(None)
   let reservedNumberStore = writable(None)
@@ -52,16 +51,9 @@ let make = (~locationId: locationId) => {
   })
 
   let handleTakeNumber = () => {
-    Js.Console.log("handleTakeNumber called")
     switch takeNumberRef.contents {
-    | Some(take) => {
-        Js.Console.log("Calling take()")
-        take()->ignore
-      }
-    | None => {
-        Js.Console.log("takeNumberRef is None")
-        Error(NumberService.DatabaseError)->ignore
-      }
+    | Some(take) => take()->ignore
+    | None => Error(NumberService.DatabaseError)->ignore
     }
   }
 

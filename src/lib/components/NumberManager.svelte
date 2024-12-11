@@ -3,16 +3,12 @@
   import ReservedNumber from "./ReservedNumber.svelte";
 
   export let locationId;
-  console.log("NumberManager component locationId:", locationId);
   const {
     numberStore,
     reservedNumberStore,
     handleTakeNumber,
     handleRelinquishNumber,
   } = numberManagerComponent(locationId);
-
-  // Add debug logging
-  $: console.log("reservedNumberStore value:", $reservedNumberStore);
 </script>
 
 <div class="ticket-machine">
