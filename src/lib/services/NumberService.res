@@ -31,7 +31,7 @@ let initNumberManager = (locationId) => {
             ->ignore
             
             // Set initial state in store
-            numberStore->set(Some(0))
+            numberStore->set(None)
           }
         | Some(_) => ()
         }
@@ -49,7 +49,7 @@ let initNumberManager = (locationId) => {
             Belt.Int.fromString(n)
             ->Belt.Option.map(num => numberStore->set(Some(num)))
             ->ignore
-        | None => numberStore->set(Some(0))  // Default to 0 if no value
+        | None => numberStore->set(None)
         }
       })
       ->ignore
@@ -90,30 +90,32 @@ let initNumberManager = (locationId) => {
         ->Gun.get("current")
         ->Gun.once(value => {
           let currentNumber = switch Js.Nullable.toOption(value) {
-          | Some(n) => Belt.Int.fromString(n)->Belt.Option.getWithDefault(0)
-          | None => 0
+          | Some(n) => Belt.Int.fromString(n)
+          | None => None
           }
           
-          let nextNumber = currentNumber + 1
-          Js.Console.log2("Next number:", nextNumber)
+          switch currentNumber {
+          | Some(current) => {
+              let nextNumber = current + 1
+              Js.Console.log2("Next number:", nextNumber)
 
-          // First, reserve the current number for this user
-          numbers
-          ->Gun.get(locationId)
-          ->Gun.get("reservations")
-          ->Gun.get(browserId)
-          ->Gun.put(Belt.Int.toString(currentNumber))
-          ->ignore
+              numbers
+              ->Gun.get(locationId)
+              ->Gun.get("reservations")
+              ->Gun.get(browserId)
+              ->Gun.put(Belt.Int.toString(current))
+              ->ignore
 
-          // Update local store with current number
-          reservedNumberStore->set(Some(currentNumber))
+              reservedNumberStore->set(Some(current))
 
-          // Then increment the current number for next user
-          numbers
-          ->Gun.get(locationId)
-          ->Gun.get("current")
-          ->Gun.put(Belt.Int.toString(nextNumber))
-          ->ignore
+              numbers
+              ->Gun.get(locationId)
+              ->Gun.get("current")
+              ->Gun.put(Belt.Int.toString(nextNumber))
+              ->ignore
+            }
+          | None => ()
+          }
         })
         ->ignore
       }
