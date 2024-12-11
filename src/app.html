@@ -1,12 +1,31 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%sveltekit.assets%/favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    %sveltekit.head%
-  </head>
-  <body data-sveltekit-preload-data="hover">
-    <div style="display: contents">%sveltekit.body%</div>
-  </body>
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="%sveltekit.assets%/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Open Graph / Social Media Meta Tags -->
+  <meta property="og:title" content="Take a Number - Virtual Queue System" />
+  <meta property="og:description"
+    content="A modern, real-time virtual queue management system. Take a number and wait for your turn from anywhere." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://take-a-number.app" />
+  <meta property="og:image" content="%sveltekit.assets%/og-image.png" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Take a Number - Virtual Queue System" />
+  <meta name="twitter:description"
+    content="A modern, real-time virtual queue management system. Take a number and wait for your turn from anywhere." />
+  <meta name="twitter:image" content="%sveltekit.assets%/og-image.png" />
+
+  %sveltekit.head%
+</head>
+
+<body data-sveltekit-preload-data="hover">
+  <div style="display: contents">%sveltekit.body%</div>
+</body>
+
 </html>
