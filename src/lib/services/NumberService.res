@@ -49,18 +49,39 @@ let initNumberManager = (~locationId as LocationId(locationId)) => {
         let existingReservation = await (
           switch Js.Nullable.toOption(reservationValue) {
           | None => Promise.resolve(None)
-          | Some(signedValue) => {
-              let verified = await SeaService.verifyData(
-                ~signedData=signedValue,
-                ~publicKey=keyPair.pub,
-              )
+          | Some(jsonString) =>
+            // Parse the JSON string
+            switch Js.Json.parseExn(jsonString) {
+            | exception _ => Promise.resolve(None)
+            | parsed => {
+                let dict = Js.Json.decodeObject(parsed)
+                switch dict {
+                | None => Promise.resolve(None)
+                | Some(dict) => {
+                    let number = Js.Dict.get(dict, "number")
+                    let signature = Js.Dict.get(dict, "signature")
+                    switch (number, signature) {
+                    | (Some(number), Some(signature)) => {
+                        let verified = await SeaService.verifyData(
+                          ~signedData=Js.Json.decodeString(signature)->Belt.Option.getExn,
+                          ~publicKey=keyPair.pub,
+                        )
 
-              Promise.resolve(
-                switch Js.Nullable.toOption(verified) {
-                | None => None
-                | Some(value) => Belt.Int.fromString(value)->Belt.Option.map(n => NumberValue(n))
-                },
-              )
+                        Promise.resolve(
+                          switch Js.Nullable.toOption(verified) {
+                          | None => None
+                          | Some(_) =>
+                            Js.Json.decodeString(number)
+                            ->Belt.Option.flatMap(Belt.Int.fromString)
+                            ->Belt.Option.map(n => NumberValue(n))
+                          },
+                        )
+                      }
+                    | _ => Promise.resolve(None)
+                    }
+                  }
+                }
+              }
             }
           }
         )
