@@ -28,6 +28,7 @@
         <ul>
           <li><a href="/" on:click={onToggle}>Home</a></li>
           <li><a href="/create" on:click={onToggle}>Create Location</a></li>
+          <li><a href="/manage" on:click={onToggle}>Manage Locations</a></li>
           <li><a href="/about" on:click={onToggle}>About</a></li>
           <li><a href="/settings" on:click={onToggle}>Settings</a></li>
         </ul>
