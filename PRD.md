@@ -95,15 +95,35 @@
 
 | Feature | Priority | Description |
 |---------|----------|-------------|
-| Queue creation | P0 | Create queue, get QR code |
-| Take a number | P0 | Customer scans, gets ticket via PoW |
+| Queue creation | P0 | Create queue (name required), get QR code |
+| Take a number | P0 | Customer scans, gets ticket via PoW (2-3s) |
 | View position | P0 | Customer sees queue position |
 | Self-serve completion | P0 | Customer marks themselves served |
 | Device persistence | P0 | Same device = same ticket (no duplicates) |
 | QR code generation | P0 | Downloadable PNG for printing |
+| Two operating modes | P0 | Self-service OR operator-managed |
+| Operator mode | P1 | Owner tags "served #N", all customers notified |
 | Expiry: time-based | P1 | Ticket expires after N hours (default: 24h) |
 | Expiry: position-based | P1 | Ticket expires after N people served (configurable) |
 | Admin panel | P1 | View queue, basic controls |
+
+### Operating Modes
+
+**Self-Service Mode (default):**
+- No store operator intervention needed
+- Customers mark themselves as served when done
+- "Now Serving" advances automatically based on customer actions
+
+**Operator-Managed Mode:**
+- Store owner takes control of queue
+- Can tag "just served ticket #36" → all customers notified
+- Can mark tickets as served/discarded
+- Customers can still self-mark if they leave early
+- "Now Serving" controlled by operator actions
+
+### Queue Number Behavior
+- Numbers increment forever (1, 2, 3... 99999)
+- Reset to 1 after 99999 (5 digits max)
 
 ### Future (v2.0+)
 
@@ -284,7 +304,7 @@ if (queue.version > clientVersion) {
 
 ## Open Questions
 
-- [ ] PoW difficulty: How many seconds of computation is acceptable for customers?
+- [x] PoW difficulty: **2-3 seconds** ✓
 - [ ] Should store operators need PoW too, or just customers?
 - [ ] Domain: take-a-number.com? tan.app? queueme.io?
 - [ ] Self-hosting: Provide Docker image or just static files?
