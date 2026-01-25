@@ -115,9 +115,10 @@ async function createStore(name, options = {}) {
 /**
  * Get store by ID
  * @param {string} storeId - Store ID
+ * @param {number} timeout - Timeout in ms (default 5000)
  * @returns {Promise<object|null>} Store data or null if not found
  */
-function getStore(storeId) {
+function getStore(storeId, timeout = 5000) {
   if (!storeId) {
     return Promise.reject(new Error('Store ID is required'));
   }
@@ -125,13 +126,39 @@ function getStore(storeId) {
   const gun = getGun();
   
   return new Promise((resolve) => {
-    gun.get('stores').get(storeId).once((data) => {
-      if (data && data.id) {
+    let resolved = false;
+    let timeoutId;
+    
+    // Use .on() to listen for data (works better for synced data)
+    const ref = gun.get('stores').get(storeId);
+    
+    ref.on((data) => {
+      if (!resolved && data && data.id) {
+        resolved = true;
+        clearTimeout(timeoutId);
+        ref.off(); // Stop listening
         resolve(data);
-      } else {
-        resolve(null);
       }
     });
+    
+    // Also try .once() for immediate local data
+    ref.once((data) => {
+      if (!resolved && data && data.id) {
+        resolved = true;
+        clearTimeout(timeoutId);
+        ref.off();
+        resolve(data);
+      }
+    });
+    
+    // Timeout to resolve with null if no data found
+    timeoutId = setTimeout(() => {
+      if (!resolved) {
+        resolved = true;
+        ref.off();
+        resolve(null);
+      }
+    }, timeout);
   });
 }
 

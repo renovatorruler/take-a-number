@@ -179,13 +179,15 @@ Note: These aren't "modes" to switch between — it's simply whether someone wit
 
 | Component | Technology | Rationale |
 |-----------|------------|-----------|
-| Frontend | Preact (CDN) | React-like, ~3kb, reactive UI, no build step |
+| Language | **ReScript** | Type-safe, no runtime bugs, follows manifesto |
+| Frontend | @rescript/react | React bindings for ReScript |
 | Styling | CSS (single file) | Simple, no preprocessor needed |
-| Database | GunDB (CDN) | Decentralized, real-time, offline-capable, peer discovery |
-| Auth/PoW | GunDB SEA (CDN) | Proof-of-work without accounts |
+| Database | GunDB | Decentralized, real-time, offline-capable, peer discovery |
+| Auth/PoW | GunDB SEA | Proof-of-work without accounts |
 | Hosting | GitHub Pages | Free, simple, default domain for MVP |
-| QR Codes | qrcode.js (CDN) | Client-side generation |
+| QR Codes | qrcode bindings | Client-side generation |
 | Routing | Hash-based (#/) | Works with static hosting, no server config |
+| Build | ReScript compiler | Compiles .res to .js (js output only, never hand-written)
 
 ### CDN Dependencies
 

@@ -1,0 +1,78 @@
+{
+  "task": "rescript-rewrite",
+  "name": "Rewrite Take a Number in ReScript",
+  "description": "Convert all JavaScript code to ReScript following the Type Manifesto",
+  "maxIterations": 25,
+  "rules": [
+    "NO JAVASCRIPT. All code must be .res files.",
+    "Follow ReScript Type Manifesto principles",
+    "Exhaustive pattern matching required",
+    "No 'any' types",
+    "No stringly-typed code",
+    "Types over tests where possible"
+  ],
+  "steps": [
+    {
+      "id": "setup",
+      "name": "ReScript Project Setup",
+      "tasks": [
+        "Add rescript and @rescript/react dependencies",
+        "Create rescript.json config",
+        "Set up src/ directory for .res files",
+        "Configure build output to lib/js/"
+      ]
+    },
+    {
+      "id": "bindings",
+      "name": "External Bindings",
+      "tasks": [
+        "Create GunDB bindings (Gun.res, Sea.res)",
+        "Create QRCode bindings",
+        "Create DOM/Browser API bindings as needed"
+      ]
+    },
+    {
+      "id": "lib",
+      "name": "Core Library",
+      "tasks": [
+        "Convert gun.js -> Gun.res (typed GunDB wrapper)",
+        "Convert pow.js -> Pow.res (typed PoW wrapper)",
+        "Convert storage.js -> Storage.res (typed localStorage)"
+      ]
+    },
+    {
+      "id": "components",
+      "name": "React Components",
+      "tasks": [
+        "Convert app.js -> App.res (router)",
+        "Convert Landing.js -> Landing.res",
+        "Convert Queue.js -> Queue.res",
+        "Convert Dispenser.js -> Dispenser.res",
+        "Convert Ticket.js -> Ticket.res",
+        "Convert ServedScreen.js -> ServedScreen.res",
+        "Convert Admin.js -> Admin.res",
+        "Convert Display.js -> Display.res"
+      ]
+    },
+    {
+      "id": "cleanup",
+      "name": "Cleanup",
+      "tasks": [
+        "Delete all .js source files (keep only compiled output)",
+        "Update index.html to load compiled JS",
+        "Verify app works",
+        "Update tests for ReScript"
+      ]
+    }
+  ],
+  "acceptanceCriteria": [
+    "Zero .js/.ts source files (only .res)",
+    "rescript build compiles without errors",
+    "All components render correctly",
+    "GunDB operations work",
+    "PoW runs successfully",
+    "All existing functionality preserved",
+    "npm test passes",
+    "npm run test:e2e passes"
+  ]
+}
