@@ -1,1 +1,0 @@
-{"cmt_scan":[{"also_scan_build_root":true,"build_root":"lib/bs","scan_dirs":["src","src/bindings","src/components","src/lib"]}],"dirs":["src","src/bindings","src/components","src/lib"],"generated":[],"pkgs":[["@rescript/core","/Users/ren/dev/take-a-number/node_modules/@rescript/core"],["@rescript/react","/Users/ren/dev/take-a-number/node_modules/@rescript/react"]],"version":2}

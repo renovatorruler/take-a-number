@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# ReScript build artifacts
+lib/
+.bsb.lock
+.merlin
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Test artifacts
+playwright-report/
+test-results/
