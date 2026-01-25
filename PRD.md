@@ -130,6 +130,15 @@
 | Expiry: time-based | P1 | Ticket expires after 24 hours |
 | Expiry: position-based | P1 | Ticket expires after N people served |
 | Basic analytics | P2 | Served today, served last hour (operator only) |
+| Error handling | P0 | Graceful failures with user feedback |
+| Loading states | P0 | UI feedback during PoW and data fetch |
+| Offline indicator | P1 | "Reconnecting..." banner when connection lost |
+| Invalid routes | P1 | Friendly 404-style page |
+| Input validation | P0 | Store name limits, XSS prevention |
+| Favicon + meta | P1 | Branding + OG tags for link sharing |
+| Print stylesheet | P2 | QR code page prints cleanly |
+| Sentry | P2 | Error logging for production debugging |
+| GitHub Actions | P1 | CI/CD for automated testing |
 
 ### Operating Modes
 
@@ -560,6 +569,10 @@ Single `index.html` handles all routes via hash changes.
 - [x] Operators need PoW: **Yes, for creation + marking served** ✓
 - [x] Hosting: **GitHub Pages** ✓
 - [x] Domain: **Default GitHub domain for MVP** ✓
+- [x] Browser support: **Modern mobile browsers only (ES2020+)** ✓
+- [x] Accessibility: **Use tooling/plugins for guidance** ✓
+- [x] Error logging: **Sentry (integrate when ready)** ✓
+- [x] CI/CD: **GitHub Actions** ✓
 
 ---
 
