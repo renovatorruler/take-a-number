@@ -1,0 +1,34 @@
+{
+  "version": "0.1.0",
+
+  "orchestrator": {
+    "maxIterationsPerTask": 50,
+    "parallelWorkers": false
+  },
+
+  "verification": {
+    "web": {
+      "enabled": true,
+      "checkConsoleErrors": true,
+      "screenshotOnFailure": true
+    },
+    "mobile": {
+      "ios": false,
+      "android": false
+    }
+  },
+
+  "services": {
+    "linear": {
+      "enabled": false
+    },
+    "codeRabbit": {
+      "enabled": false
+    }
+  },
+
+  "rules": {
+    "noJavaScript": false,
+    "requireVerificationBeforeComplete": true
+  }
+}
