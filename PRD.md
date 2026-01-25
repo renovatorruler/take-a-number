@@ -2,9 +2,9 @@
 
 > Zero-friction queue management. No signup. No app. Just scan and wait.
 
-**Version:** 1.0
+**Version:** 1.1
 **Last Updated:** 2026-01-25
-**Status:** Draft
+**Status:** Spec Complete — Ready for Development
 
 ---
 
@@ -19,6 +19,8 @@
 3. **Spam-resistant** — Proof-of-work prevents abuse without requiring personal data
 4. **Decentralized** — GunDB for storage; no central server dependency
 5. **Privacy-first** — Device ID only; no data collection
+6. **Offline-first** — Works with GunDB peer discovery when relay is down
+7. **Local data** — Each store's data stays local; customers don't carry other stores' data
 
 ---
 
@@ -34,7 +36,7 @@
 - Small business owner (bakery, deli, barbershop, DMV-style service)
 - Wants queue management without staff overhead
 - Needs to print one QR code and forget about it
-- Optionally wants to notify customers or manage queue
+- Optionally wants to actively manage queue and notify customers
 
 ---
 
@@ -45,10 +47,13 @@
 ```
 1. Customer sees printed QR code at store
 2. Scans with phone camera → opens web page
-3. Page shows: "Getting your number..." (proof-of-work runs)
-4. Page shows: "You are #17 — 4 people ahead of you"
-5. Number is tied to device ID (persists if they refresh)
-6. Customer waits / leaves / checks back later
+3. Sees ticket dispenser graphic
+4. Drags down (or taps) to pull ticket
+5. Fun animation plays while PoW runs (~2-3 seconds)
+6. Red paper ticket reveals: "Your number: #17"
+7. Shows: "4 people ahead of you | Now serving: #13"
+8. Number tied to device (localStorage)
+9. Prompt: "Add to Home Screen for notifications"
 ```
 
 ### Flow 2: Customer Marks Themselves Served
@@ -57,34 +62,50 @@
 1. Customer returns to same URL (or keeps tab open)
 2. When served, taps "I've been served"
 3. System marks them complete → queue advances
-4. Optional: "How was your wait?" (simple feedback, not required)
+4. Shows: "Thanks! Follow us on Twitter @storename"
 ```
 
 ### Flow 3: Store Operator Creates a Queue
 
 ```
-1. Operator visits take-a-number.com (or self-hosted)
-2. Clicks "Create a Queue"
-3. Proof-of-work runs (spam prevention for queue creation too)
-4. Receives:
-   - Unique queue URL
-   - QR code image (downloadable/printable)
-   - Admin link (tied to device, or SEA keypair)
-5. Prints QR code, sticks it at counter
+1. Operator visits site
+2. Enters store name (required)
+3. Clicks "Create Queue"
+4. PoW runs (~2-3 seconds, spam prevention)
+5. Receives:
+   - Customer QR code (queue URL)
+   - Admin URL (secret, unguessable)
+6. Prints customer QR code, sticks at counter
+7. Bookmarks admin URL
 ```
 
 ### Flow 4: Store Operator Admin Panel
 
 ```
-1. Operator opens admin link (bookmarked or saved)
+1. Operator opens admin URL (bookmarked)
 2. Sees:
-   - Current queue size
-   - List of waiting numbers
-   - "Now Serving" indicator
-3. Can manually:
-   - Advance to next customer (optional)
-   - Clear expired tickets
+   - Now Serving: #13
+   - People served today: 47
+   - People served last hour: 12
+   - Waiting list
+3. Can:
+   - Mark tickets as served (requires PoW)
+   - Download/print QR code
+   - View display screen URL
    - Adjust settings
+```
+
+### Flow 5: Display Screen (for store TV/monitor)
+
+```
+1. Operator opens display URL on store computer/TV
+2. Desktop-optimized view shows:
+   - Store name
+   - NOW SERVING: #42 (large)
+   - Served today: 156
+   - Served last hour: 23
+3. Updates in real-time via GunDB
+4. Deli-counter bell sound on number change
 ```
 
 ---
@@ -95,45 +116,50 @@
 
 | Feature | Priority | Description |
 |---------|----------|-------------|
-| Queue creation | P0 | Create queue (name required), get QR code |
-| Take a number | P0 | Customer scans, gets ticket via PoW (2-3s) |
-| View position | P0 | Customer sees queue position |
-| Self-serve completion | P0 | Customer marks themselves served |
-| Device persistence | P0 | Same device = same ticket (no duplicates) |
-| QR code generation | P0 | Downloadable PNG for printing |
-| Two operating modes | P0 | Self-service OR operator-managed |
-| Operator mode | P1 | Owner tags "served #N", all customers notified |
-| Expiry: time-based | P1 | Ticket expires after N hours (default: 24h) |
-| Expiry: position-based | P1 | Ticket expires after N people served (configurable) |
-| Admin panel | P1 | View queue, basic controls |
+| Queue creation | P0 | Create queue (name required), get QR code, PoW required |
+| Take a number | P0 | Drag/tap ticket dispenser, PoW (~2-3s), red paper ticket UI |
+| View position | P0 | Queue position + now serving, real-time updates |
+| Self-serve completion | P0 | Mark yourself served → social follow prompt |
+| Device persistence | P0 | Same device = same ticket (localStorage) |
+| QR code generation | P0 | Downloadable PNG with store URL |
+| Incognito detection | P0 | Block with message: "Open in regular browser" |
+| Display screen | P1 | Desktop-optimized "Now Serving" for store TVs |
+| Operator marking | P1 | Admin can mark tickets served (PoW required) |
+| Browser notifications | P1 | "You're next!" with deli counter bell sound |
+| PWA prompt | P1 | "Add to Home Screen" for better experience |
+| Expiry: time-based | P1 | Ticket expires after 24 hours |
+| Expiry: position-based | P1 | Ticket expires after N people served |
+| Basic analytics | P2 | Served today, served last hour (operator only) |
 
 ### Operating Modes
 
 **Self-Service Mode (default):**
 - No store operator intervention needed
 - Customers mark themselves as served when done
-- "Now Serving" advances automatically based on customer actions
+- "Now Serving" advances automatically
+- Unserved tickets auto-expire
 
 **Operator-Managed Mode:**
-- Store owner takes control of queue
-- Can tag "just served ticket #36" → all customers notified
-- Can mark tickets as served/discarded
+- Operator has admin URL
+- Can mark tickets as served (requires PoW each time)
+- All customers notified when their number is called
 - Customers can still self-mark if they leave early
-- "Now Serving" controlled by operator actions
+
+Note: These aren't "modes" to switch between — it's simply whether someone with admin access is actively managing or not.
 
 ### Queue Number Behavior
-- Numbers increment forever (1, 2, 3... 99999)
-- Reset to 1 after 99999 (5 digits max)
+- Numbers increment: 1, 2, 3... up to 99999
+- Reset to 1 after 99999
+- No rate limiting beyond PoW (spam at your own computational expense)
 
 ### Future (v2.0+)
 
 | Feature | Description |
 |---------|-------------|
-| Notifications | Browser push when "you're next" |
 | Estimated wait time | Based on average service time |
 | Multiple queues | One store, multiple service types |
-| Analytics | Wait times, peak hours, no-shows |
-| Custom branding | Store logo on queue page |
+| Store logo | Custom branding |
+| i18n | Multiple languages |
 | SMS fallback | Optional phone number for alerts |
 
 ---
@@ -144,134 +170,215 @@
 
 | Component | Technology | Rationale |
 |-----------|------------|-----------|
-| Frontend | Static HTML/JS | No build step, maximum compatibility |
-| Database | GunDB | Decentralized, real-time, offline-capable |
+| Frontend | Static HTML/CSS/JS | No build step, maximum compatibility |
+| Database | GunDB | Decentralized, real-time, offline-capable, peer discovery |
 | Auth/PoW | GunDB SEA | Proof-of-work without accounts |
-| Hosting | Any static host | Vercel, Netlify, GitHub Pages, self-hosted |
+| Hosting | GitHub Pages | Free, simple, default domain for MVP |
+| QR Codes | qrcode.js or similar | Client-side generation |
 
-### Data Model (GunDB)
+### GunDB Configuration
 
 ```javascript
-// Queue
-gun.get('queues').get(queueId).put({
-  id: 'abc123',
+// Use public relay for MVP (or deploy own later)
+const gun = Gun(['https://gun-manhattan.herokuapp.com/gun'])
+
+// Each store = separate "room" for data locality
+gun.get('stores').get(storeId)  // only syncs within this store
+```
+
+### Data Model
+
+```javascript
+// Store
+gun.get('stores').get(storeId).put({
+  id: 'uuid-unguessable',
   name: 'Joe's Bakery',
   createdAt: timestamp,
+  adminId: 'uuid-unguessable-admin',  // secret admin URL ID
   settings: {
     expiryHours: 24,
-    expiryAfterServed: 10,  // expire after 10 people served
+    expiryAfterServed: 10,
   },
-  currentNumber: 42,  // last issued
-  nowServing: 38,     // display number
+  currentNumber: 42,      // last issued
+  nowServing: 38,         // current
+  servedToday: 156,       // counter
+  servedLastHour: 23,     // rolling
+  version: '1.0'
 })
 
 // Ticket
-gun.get('queues').get(queueId).get('tickets').get(ticketId).put({
-  id: 'ticket-xyz',
+gun.get('stores').get(storeId).get('tickets').get(ticketNumber).put({
   number: 17,
-  deviceId: 'device-hash',
+  deviceId: 'sea-public-key-hash',
   issuedAt: timestamp,
-  status: 'waiting' | 'served' | 'expired',
+  status: 'waiting' | 'served' | 'expired' | 'discarded',
   servedAt: timestamp | null,
+  servedBy: 'self' | 'operator'
 })
 ```
 
-### Proof-of-Work Flow
+### URL Structure
 
-```javascript
-// On "Take a Number" click:
-1. Generate SEA keypair (GunDB built-in)
-2. PoW runs client-side (prevents spam)
-3. Once complete, ticket is issued
-4. Keypair tied to device localStorage
-5. Same device requesting again → returns existing ticket
 ```
+https://username.github.io/take-a-number/
+├── /                     # Landing page (create queue)
+├── /q/{storeId}          # Customer queue page
+├── /admin/{adminId}      # Operator admin panel
+└── /display/{storeId}    # Display screen for TV
+```
+
+- `storeId`: UUID, unguessable, shared via QR code
+- `adminId`: Separate UUID, secret, only operator knows
+
+### Proof-of-Work Requirements
+
+| Action | PoW Required | Duration |
+|--------|--------------|----------|
+| Take a number | Yes | ~2-3 seconds |
+| Mark self served | No | Instant |
+| Create store | Yes | ~2-3 seconds |
+| Operator mark served | Yes | ~2-3 seconds |
 
 ### Device Identification
 
-- Primary: SEA keypair stored in localStorage
-- Fallback: fingerprint hash (canvas, screen, etc.) — used only to detect "same device"
-- No tracking, no cookies, no personal data
+- SEA keypair stored in localStorage
+- Same keypair = same device = same ticket
+- Incognito mode: Detect and block with message
+- Multiple tabs: Same ticket shown
+- Multiple devices: Multiple tickets (acceptable)
 
-### Versioning Strategy
+### Offline Behavior
 
-```javascript
-// Each queue stores schema version
-queue.version = '1.0'
+- GunDB peer discovery for local sync
+- If relay down, nearby devices sync directly
+- Data persists locally, syncs when connectivity returns
 
-// Client checks compatibility
-if (queue.version > clientVersion) {
-  // Show "Please refresh" or graceful degradation
-}
-```
+### Data Retention
+
+- Purge served/expired tickets after 1 year
+- GunDB garbage collection consideration
 
 ---
 
-## Screens
+## UI/UX Specifications
 
-### 1. Landing Page (take-a-number.com)
+### Design Language
 
+- **Style**: Clean, minimal, old-school deli counter aesthetic
+- **Ticket**: Classic red paper ticket look (tear-off style)
+- **Interaction**: Drag down to pull ticket from dispenser, or tap
+- **Animation**: Fun "work being done" animation during PoW (not loading spinner)
+- **Sound**: Deli counter bell on notifications
+- **Mobile-first**: Optimized for phone screens
+
+### Color Palette (suggested)
+
+```
+Primary:    #D32F2F (deli red)
+Background: #FFF8E1 (cream/off-white)
+Text:       #212121 (near black)
+Accent:     #1976D2 (blue for CTAs)
+```
+
+### Key Screens
+
+#### 1. Landing Page
 ```
 ┌─────────────────────────────────┐
 │                                 │
-│      🎫 Take a Number          │
+│   🎫 TAKE A NUMBER             │
 │                                 │
-│   Queue management without     │
-│   the hassle. No app needed.   │
+│   Queue management for your    │
+│   store. No app needed.        │
 │                                 │
-│   [Create a Queue]             │
+│   Store Name: [____________]   │
 │                                 │
-│   Already have a queue?        │
-│   Scan the QR code or enter    │
-│   your queue link.             │
+│   [Create My Queue]            │
 │                                 │
 └─────────────────────────────────┘
 ```
 
-### 2. Customer Queue Page
-
+#### 2. Customer Queue Page (Mobile)
 ```
 ┌─────────────────────────────────┐
-│   Joe's Bakery                  │
+│   JOE'S BAKERY                  │
 │                                 │
-│   Your Number                   │
-│       ┌─────────┐               │
-│       │   17    │               │
-│       └─────────┘               │
-│                                 │
-│   4 people ahead of you         │
-│   Now serving: #13              │
-│                                 │
-│   [I've Been Served]            │
-│                                 │
-│   ─────────────────────────     │
-│   Ticket expires in 23h 14m     │
-│   or after 10 more served       │
-└─────────────────────────────────┘
-```
-
-### 3. Admin Panel
-
-```
-┌─────────────────────────────────┐
-│   Joe's Bakery — Admin          │
+│   ┌─────────────────────────┐   │
+│   │   ▼ PULL FOR TICKET ▼   │   │
+│   │  ┌───────────────────┐  │   │
+│   │  │                   │  │   │
+│   │  │       #17         │  │   │
+│   │  │                   │  │   │
+│   │  │   YOUR NUMBER     │  │   │
+│   │  └───────────────────┘  │   │
+│   └─────────────────────────┘   │
 │                                 │
 │   Now Serving: #13              │
-│   In Queue: 7 people            │
+│   4 people ahead of you         │
 │                                 │
+│   [I'VE BEEN SERVED]            │
+│                                 │
+│   ───────────────────────────   │
+│   ⏰ Expires in 23h 14m         │
+│                                 │
+│   📱 Add to Home Screen         │
+└─────────────────────────────────┘
+```
+
+#### 3. Display Screen (Desktop/TV)
+```
+┌─────────────────────────────────────────────────┐
+│                                                 │
+│              JOE'S BAKERY                       │
+│                                                 │
+│           ╔═══════════════════╗                 │
+│           ║                   ║                 │
+│           ║   NOW SERVING     ║                 │
+│           ║                   ║                 │
+│           ║       #42         ║                 │
+│           ║                   ║                 │
+│           ╚═══════════════════╝                 │
+│                                                 │
+│   Served today: 156    |    Last hour: 23      │
+│                                                 │
+└─────────────────────────────────────────────────┘
+```
+
+#### 4. Admin Panel
+```
+┌─────────────────────────────────┐
+│   JOE'S BAKERY — ADMIN          │
+│                                 │
+│   Now Serving: #42              │
+│   Served today: 156             │
+│   Served last hour: 23          │
+│                                 │
+│   [View Display Screen]         │
 │   [Download QR Code]            │
 │                                 │
+│   Waiting:                      │
+│   #43 — 2 min ago  [Mark Served]│
+│   #44 — 1 min ago  [Mark Served]│
+│   #45 — just now   [Mark Served]│
+│                                 │
 │   Settings                      │
-│   ├─ Expiry: 24 hours           │
-│   └─ Expire after: 10 served    │
+│   Expiry: [24] hours            │
+│   Expire after: [10] served     │
 │                                 │
-│   Queue                         │
-│   #13 — waiting (2h ago)        │
-│   #14 — waiting (1h ago)        │
-│   #15 — waiting (45m ago)       │
-│   ...                           │
+└─────────────────────────────────┘
+```
+
+#### 5. Post-Served Screen
+```
+┌─────────────────────────────────┐
 │                                 │
-│   [Clear Expired] [Reset Queue] │
+│   ✓ Thanks for visiting!        │
+│                                 │
+│   Follow Joe's Bakery           │
+│   🐦 @joesbakery                │
+│                                 │
+│   [Take Another Number]         │
+│                                 │
 └─────────────────────────────────┘
 ```
 
@@ -281,13 +388,39 @@ if (queue.version > clientVersion) {
 
 | Scenario | Handling |
 |----------|----------|
-| Customer scans twice (same device) | Return existing ticket |
-| Customer clears browser data | Gets new ticket (old one orphaned, expires naturally) |
-| Two customers share device | They share a ticket (acceptable trade-off) |
-| Store operator loses admin link | Can regenerate via SEA keypair recovery (if saved) |
-| Queue gets very long | Consider "queue full" cap (future feature) |
-| Spam attack | PoW makes it expensive; rate limiting as backup |
-| Offline | GunDB syncs when back online |
+| Same device scans twice | Return existing ticket |
+| Incognito mode | Block: "Please open in regular browser" |
+| Multiple tabs | Same ticket shown |
+| Multiple devices | Multiple tickets (acceptable) |
+| Customer clears data | New ticket (old expires naturally) |
+| Relay server down | Peer discovery, local-first |
+| Spam attack | PoW makes it computationally expensive |
+| Very long queue | No cap for MVP; numbers keep incrementing |
+
+---
+
+## File Structure
+
+```
+take-a-number/
+├── index.html              # Landing page (create queue)
+├── queue.html              # Customer queue page  
+├── admin.html              # Operator admin panel
+├── display.html            # Display screen for TV
+├── css/
+│   └── style.css           # All styles
+├── js/
+│   ├── gun.min.js          # GunDB
+│   ├── sea.js              # GunDB SEA
+│   ├── qrcode.min.js       # QR generation
+│   └── app.js              # Application logic
+├── assets/
+│   ├── bell.mp3            # Deli counter bell
+│   └── ticket-bg.svg       # Red ticket graphic
+├── PRD.md
+├── README.md
+└── .stewie/
+```
 
 ---
 
@@ -296,53 +429,54 @@ if (queue.version > clientVersion) {
 | Metric | Target |
 |--------|--------|
 | Time to first ticket | < 5 seconds (including PoW) |
-| Page load (3G) | < 3 seconds |
-| Queue creation | < 10 seconds |
+| Page load (3G) | < 2 seconds |
+| Queue creation | < 5 seconds |
 | Zero customer support | Self-explanatory UI |
-
----
-
-## Open Questions
-
-- [x] PoW difficulty: **2-3 seconds** ✓
-- [ ] Should store operators need PoW too, or just customers?
-- [ ] Domain: take-a-number.com? tan.app? queueme.io?
-- [ ] Self-hosting: Provide Docker image or just static files?
 
 ---
 
 ## Milestones
 
-### M1: Core Flow (Week 1-2)
-- [ ] Queue creation + QR code
-- [ ] Customer takes a number
-- [ ] View queue position
-- [ ] Mark as served
+### M1: Core Flow
+- [ ] Landing page with store creation (PoW)
+- [ ] QR code generation
+- [ ] Customer queue page with ticket dispenser UI
+- [ ] Take a number (drag/tap + PoW)
+- [ ] View position (real-time via GunDB)
+- [ ] Mark as served → social follow prompt
 
-### M2: Expiry & Admin (Week 3)
+### M2: Operator Features  
+- [ ] Admin panel (view queue, mark served with PoW)
+- [ ] Display screen for TV
+- [ ] Browser notifications + sound
+
+### M3: Polish
 - [ ] Time-based expiry
 - [ ] Position-based expiry
-- [ ] Basic admin panel
+- [ ] PWA manifest + Add to Home Screen
+- [ ] Incognito detection
+- [ ] Offline handling
+- [ ] Analytics (served today/hour)
 
-### M3: Polish (Week 4)
-- [ ] Mobile-optimized UI
-- [ ] Error handling
-- [ ] Offline resilience
-- [ ] Documentation
+---
+
+## Open Questions (Resolved)
+
+- [x] PoW difficulty: **2-3 seconds** ✓
+- [x] Operators need PoW: **Yes, for creation + marking served** ✓
+- [x] Hosting: **GitHub Pages** ✓
+- [x] Domain: **Default GitHub domain for MVP** ✓
 
 ---
 
 ## Appendix: GunDB SEA Primer
 
-SEA (Security, Encryption, Authorization) provides:
-- **Keypair generation** — Public/private key per device
-- **Proof of work** — Computational challenge to prevent spam
-- **Signatures** — Verify data authenticity without central server
-- **Encryption** — Optional, for private data
-
 ```javascript
 // Generate keypair (includes PoW)
 const pair = await SEA.pair()
+
+// Work/PoW (standalone)
+const work = await SEA.work(data, pair)
 
 // Sign data
 const signed = await SEA.sign(data, pair)
