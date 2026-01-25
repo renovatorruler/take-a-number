@@ -1,0 +1,224 @@
+/* Take a Number - Base Styles */
+/* Deli counter aesthetic */
+
+:root {
+  --color-primary: #D32F2F;    /* Deli red */
+  --color-background: #FFF8E1; /* Cream/off-white */
+  --color-text: #212121;       /* Near black */
+  --color-accent: #1976D2;     /* Blue for CTAs */
+  --color-white: #FFFFFF;
+  --color-gray-light: #F5F5F5;
+  --color-gray: #9E9E9E;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+#app {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
+}
+
+.btn-secondary {
+  background-color: var(--color-accent);
+  color: var(--color-white);
+}
+
+.btn-secondary:hover {
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+}
+
+/* Forms */
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 2px solid var(--color-gray);
+  border-radius: 8px;
+  background-color: var(--color-white);
+  transition: border-color 0.2s;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+/* Layout utilities */
+.container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
+
+/* Page components */
+.page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1rem;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.page-title {
+  color: var(--color-primary);
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+  color: var(--color-gray);
+  font-size: 1rem;
+}
+
+/* Ticket styles */
+.ticket {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(211, 47, 47, 0.3);
+}
+
+.ticket-number {
+  font-size: 4rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.ticket-label {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.9;
+}
+
+/* Status display */
+.status {
+  background-color: var(--color-white);
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.status-label {
+  font-size: 0.875rem;
+  color: var(--color-gray);
+}
+
+.status-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+/* Error state */
+.error {
+  background-color: #FFEBEE;
+  color: var(--color-primary);
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* Loading state */
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: var(--color-gray);
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+  .page {
+    padding: 3rem 2rem;
+  }
+  
+  .page-title {
+    font-size: 2.5rem;
+  }
+  
+  .ticket-number {
+    font-size: 5rem;
+  }
+}
