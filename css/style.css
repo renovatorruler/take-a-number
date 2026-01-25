@@ -208,6 +208,689 @@ input[type="number"]:focus {
   color: var(--color-gray);
 }
 
+/* Form styles */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--color-text);
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 2px solid var(--color-gray);
+  border-radius: 8px;
+  background-color: var(--color-white);
+  transition: border-color 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.form-hint {
+  font-size: 0.875rem;
+  color: var(--color-gray);
+  margin-top: 0.25rem;
+}
+
+.btn-full {
+  width: 100%;
+}
+
+.error-message {
+  background-color: #FFEBEE;
+  color: var(--color-primary);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+/* Loading animation */
+.loading-animation {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.spinner-container {
+  margin-bottom: 1.5rem;
+}
+
+.ticket-spinner {
+  display: inline-block;
+  animation: spin 1s ease-in-out infinite;
+  font-size: 4rem;
+}
+
+@keyframes spin {
+  0% { transform: rotateY(0deg); }
+  100% { transform: rotateY(360deg); }
+}
+
+.loading-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 0.5rem;
+}
+
+.loading-subtext {
+  font-size: 0.875rem;
+  color: var(--color-gray);
+}
+
+/* QR Code section */
+.qr-section, .admin-section {
+  background-color: var(--color-white);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.qr-section h2, .admin-section h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.text-muted {
+  color: var(--color-gray);
+  font-size: 0.875rem;
+}
+
+.qr-code-container {
+  margin: 1.5rem 0;
+}
+
+.qr-code-image {
+  max-width: 256px;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.admin-url-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.admin-url-input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  border: 2px solid var(--color-gray);
+  border-radius: 8px;
+  background-color: var(--color-gray-light);
+}
+
+.warning-text {
+  font-size: 0.875rem;
+  color: #FF6B00;
+  font-weight: 500;
+}
+
+/* Feature list */
+.feature-list {
+  list-style: none;
+  padding: 0;
+}
+
+.feature-list li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--color-gray-light);
+}
+
+.feature-list li:last-child {
+  border-bottom: none;
+}
+
+/* Next steps */
+.next-steps {
+  background-color: var(--color-gray-light);
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.next-steps h3 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.next-steps ol {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.next-steps li {
+  padding: 0.25rem 0;
+  font-size: 0.875rem;
+}
+
+/* Forms - Extended */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--color-text);
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 2px solid var(--color-gray);
+  border-radius: 8px;
+  background-color: var(--color-white);
+  transition: border-color 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.form-hint {
+  font-size: 0.75rem;
+  color: var(--color-gray);
+  margin-top: 0.25rem;
+}
+
+.btn-full {
+  width: 100%;
+}
+
+/* Error message */
+.error-message {
+  background-color: #FFEBEE;
+  color: var(--color-primary);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+/* Text utilities */
+.text-muted {
+  color: var(--color-gray);
+  font-size: 0.875rem;
+}
+
+/* Warning text */
+.warning-text {
+  color: #F57C00;
+  font-size: 0.875rem;
+}
+
+/* Feature list */
+.feature-list {
+  list-style: none;
+  padding: 0;
+}
+
+.feature-list li {
+  padding: 0.5rem 0;
+  font-size: 1rem;
+}
+
+/* QR Code section */
+.qr-section {
+  text-align: center;
+  background-color: var(--color-white);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.qr-code-container {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0;
+}
+
+.qr-code-image {
+  width: 200px;
+  height: 200px;
+  border-radius: 8px;
+}
+
+/* Admin URL section */
+.admin-section {
+  background-color: var(--color-white);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.admin-url-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.admin-url-input {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 0.75rem;
+  border: 1px solid var(--color-gray);
+  border-radius: 4px;
+  background-color: var(--color-gray-light);
+}
+
+/* Next steps */
+.next-steps {
+  background-color: var(--color-gray-light);
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+}
+
+.next-steps h3 {
+  margin-bottom: 0.5rem;
+}
+
+.next-steps ol {
+  padding-left: 1.5rem;
+  margin: 0;
+}
+
+.next-steps li {
+  padding: 0.25rem 0;
+}
+
+/* Actions */
+.actions {
+  text-align: center;
+}
+
+/* Loading Animation */
+.loading-animation {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.spinner-container {
+  margin-bottom: 1.5rem;
+}
+
+.ticket-spinner {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+  animation: bounce 1s ease-in-out infinite;
+}
+
+.ticket-front {
+  font-size: 4rem;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.loading-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 0.5rem;
+}
+
+.loading-subtext {
+  color: var(--color-gray);
+  font-size: 0.875rem;
+}
+
+/* Ticket Dispenser */
+.dispenser-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 2rem 0;
+}
+
+.dispenser {
+  width: 280px;
+  background: linear-gradient(180deg, #8B0000 0%, #B22222 50%, #8B0000 100%);
+  border-radius: 12px 12px 0 0;
+  padding: 1rem;
+  padding-bottom: 0;
+  box-shadow: 0 4px 20px rgba(139, 0, 0, 0.3);
+  position: relative;
+  min-height: 100px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.dispenser-slot {
+  background-color: #1a1a1a;
+  height: 20px;
+  border-radius: 4px 4px 0 0;
+  margin: 0 -1rem;
+  margin-top: 0.5rem;
+  box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.dispenser-label {
+  color: #FFD700;
+  font-weight: 700;
+  font-size: 1.25rem;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.dispenser-hint {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.75rem;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+/* Ticket emerging from dispenser */
+.ticket-emerging {
+  position: relative;
+  width: 240px;
+  margin: 0 auto;
+  margin-top: -10px;
+  transform-origin: top center;
+  transition: transform 0.3s ease-out;
+}
+
+.ticket-emerging.pulling {
+  animation: ticketPull 0.5s ease-out forwards;
+}
+
+@keyframes ticketPull {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(20px); }
+}
+
+/* Red Paper Ticket */
+.paper-ticket {
+  background: linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%);
+  color: white;
+  padding: 1.5rem 1rem;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 4px 16px rgba(211, 47, 47, 0.4);
+  overflow: hidden;
+}
+
+.paper-ticket::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 8px,
+    rgba(255, 255, 255, 0.1) 8px,
+    rgba(255, 255, 255, 0.1) 16px
+  );
+}
+
+.paper-ticket::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 16px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 16'%3E%3Cpath fill='%23FFF8E1' d='M0 16 L10 0 L20 16 Z'/%3E%3C/svg%3E") repeat-x;
+  background-size: 20px 16px;
+}
+
+.ticket-store-name {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.9;
+  text-align: center;
+}
+
+.ticket-number-display {
+  font-size: 4rem;
+  font-weight: 900;
+  text-align: center;
+  line-height: 1;
+  margin: 0.5rem 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.ticket-your-number {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  text-align: center;
+  opacity: 0.9;
+}
+
+/* Queue Status */
+.queue-status {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+  flex-wrap: wrap;
+}
+
+.queue-status .status {
+  flex: 1;
+  min-width: 120px;
+  max-width: 160px;
+}
+
+/* Served button */
+.served-btn-container {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+/* Expiry info */
+.expiry-info {
+  text-align: center;
+  color: var(--color-gray);
+  font-size: 0.875rem;
+  margin: 1rem 0;
+}
+
+/* PWA prompt */
+.pwa-prompt {
+  background-color: var(--color-accent);
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.875rem;
+  margin: 1rem 0;
+  cursor: pointer;
+}
+
+/* Served Screen */
+.served-screen {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.served-checkmark {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+}
+
+.served-title {
+  font-size: 1.75rem;
+  color: #4CAF50;
+  margin-bottom: 0.5rem;
+}
+
+.served-message {
+  color: var(--color-gray);
+  margin-bottom: 2rem;
+}
+
+.social-prompt {
+  background-color: var(--color-white);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.social-prompt h3 {
+  margin-bottom: 0.5rem;
+}
+
+.social-handle {
+  font-size: 1.25rem;
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #1DA1F2;
+  color: white;
+  border-radius: 24px;
+  text-decoration: none;
+  font-weight: 600;
+  margin-top: 1rem;
+  transition: background-color 0.2s;
+}
+
+.social-link:hover {
+  background-color: #1a8cd8;
+}
+
+/* Error page */
+.error-page {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.error-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+/* Incognito warning */
+.incognito-warning {
+  background-color: #FFF3E0;
+  color: #E65100;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.incognito-warning h2 {
+  margin-bottom: 0.5rem;
+}
+
+/* Confirmation dialog */
+.confirm-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 1rem;
+}
+
+.confirm-dialog {
+  background-color: var(--color-white);
+  padding: 1.5rem;
+  border-radius: 12px;
+  max-width: 320px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
+.confirm-dialog h3 {
+  margin-bottom: 0.5rem;
+}
+
+.confirm-dialog p {
+  color: var(--color-gray);
+  margin-bottom: 1.5rem;
+}
+
+.confirm-dialog-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.confirm-dialog-buttons .btn {
+  flex: 1;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 2px solid var(--color-gray);
+  color: var(--color-text);
+}
+
+/* PoW Animation */
+.pow-animation {
+  text-align: center;
+  padding: 2rem;
+}
+
+.pow-spinner {
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 1rem;
+}
+
+.pow-ticket {
+  font-size: 3rem;
+  animation: wobble 0.8s ease-in-out infinite;
+}
+
+@keyframes wobble {
+  0%, 100% { transform: rotate(-10deg); }
+  50% { transform: rotate(10deg); }
+}
+
+.pow-text {
+  font-size: 1rem;
+  color: var(--color-text);
+  margin-bottom: 0.25rem;
+}
+
+.pow-subtext {
+  font-size: 0.75rem;
+  color: var(--color-gray);
+}
+
 /* Responsive */
 @media (min-width: 768px) {
   .page {
@@ -220,5 +903,17 @@ input[type="number"]:focus {
   
   .ticket-number {
     font-size: 5rem;
+  }
+  
+  .ticket-number-display {
+    font-size: 5rem;
+  }
+  
+  .dispenser {
+    width: 320px;
+  }
+  
+  .ticket-emerging {
+    width: 280px;
   }
 }
