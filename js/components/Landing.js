@@ -105,13 +105,16 @@ const Landing = () => {
   // Success screen - show QR code and admin URL
   if (createdStore) {
     return html`
-      <div class="page" data-testid="landing-page">
+      <div class="page" data-testid="landing-page" data-store-id="${createdStore.storeId}">
         <div class="page-header">
           <h1 class="page-title">🎉 Queue Created!</h1>
           <p class="page-subtitle">${createdStore.store.name}</p>
         </div>
         
         <div class="container">
+          <!-- Hidden element with customer URL for testing -->
+          <input type="hidden" data-testid="customer-url" value="${createdStore.customerUrl}" />
+          
           <div class="qr-section" data-testid="qr-section">
             <h2>Customer QR Code</h2>
             <p class="text-muted">Print this and display at your counter</p>
