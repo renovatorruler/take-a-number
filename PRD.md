@@ -170,11 +170,47 @@ Note: These aren't "modes" to switch between — it's simply whether someone wit
 
 | Component | Technology | Rationale |
 |-----------|------------|-----------|
-| Frontend | Static HTML/CSS/JS | No build step, maximum compatibility |
-| Database | GunDB | Decentralized, real-time, offline-capable, peer discovery |
-| Auth/PoW | GunDB SEA | Proof-of-work without accounts |
+| Frontend | Preact (CDN) | React-like, ~3kb, reactive UI, no build step |
+| Styling | CSS (single file) | Simple, no preprocessor needed |
+| Database | GunDB (CDN) | Decentralized, real-time, offline-capable, peer discovery |
+| Auth/PoW | GunDB SEA (CDN) | Proof-of-work without accounts |
 | Hosting | GitHub Pages | Free, simple, default domain for MVP |
-| QR Codes | qrcode.js or similar | Client-side generation |
+| QR Codes | qrcode.js (CDN) | Client-side generation |
+| Routing | Hash-based (#/) | Works with static hosting, no server config |
+
+### CDN Dependencies
+
+```html
+<!-- Preact -->
+<script src="https://unpkg.com/preact@10/dist/preact.umd.js"></script>
+<script src="https://unpkg.com/preact@10/hooks/dist/hooks.umd.js"></script>
+<script src="https://unpkg.com/htm@3/dist/htm.umd.js"></script>
+
+<!-- GunDB -->
+<script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
+
+<!-- QR Code -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1/build/qrcode.min.js"></script>
+```
+
+### Why Preact + HTM (no build step)
+
+```javascript
+// HTM lets us write JSX-like syntax without a build step
+const { h, render } = preact;
+const { useState, useEffect } = preactHooks;
+const html = htm.bind(h);
+
+function App() {
+  const [count, setCount] = useState(0);
+  return html`<button onClick=${() => setCount(count + 1)}>
+    Count: ${count}
+  </button>`;
+}
+
+render(html`<${App} />`, document.body);
+```
 
 ### GunDB Configuration
 
@@ -403,24 +439,42 @@ Accent:     #1976D2 (blue for CTAs)
 
 ```
 take-a-number/
-├── index.html              # Landing page (create queue)
-├── queue.html              # Customer queue page  
-├── admin.html              # Operator admin panel
-├── display.html            # Display screen for TV
+├── index.html              # Single HTML entry point
 ├── css/
-│   └── style.css           # All styles
+│   └── style.css           # All styles (deli counter aesthetic)
 ├── js/
-│   ├── gun.min.js          # GunDB
-│   ├── sea.js              # GunDB SEA
-│   ├── qrcode.min.js       # QR generation
-│   └── app.js              # Application logic
+│   ├── app.js              # Main app, routing, Preact setup
+│   ├── components/
+│   │   ├── Landing.js      # Create queue page
+│   │   ├── Queue.js        # Customer queue page
+│   │   ├── Admin.js        # Operator admin panel
+│   │   ├── Display.js      # TV display screen
+│   │   ├── Ticket.js       # Red paper ticket component
+│   │   └── Dispenser.js    # Drag-to-pull dispenser
+│   ├── lib/
+│   │   ├── gun.js          # GunDB helpers
+│   │   ├── pow.js          # Proof-of-work wrapper
+│   │   └── storage.js      # localStorage helpers
+│   └── utils/
+│       └── qr.js           # QR code generation
 ├── assets/
-│   ├── bell.mp3            # Deli counter bell
-│   └── ticket-bg.svg       # Red ticket graphic
+│   ├── bell.mp3            # Deli counter bell sound
+│   └── ticket.svg          # Red ticket graphic
 ├── PRD.md
 ├── README.md
 └── .stewie/
 ```
+
+### Routing (Hash-based)
+
+```
+#/              → Landing (create queue)
+#/q/{storeId}   → Customer queue page
+#/admin/{id}    → Operator admin panel  
+#/display/{id}  → TV display screen
+```
+
+Single `index.html` handles all routes via hash changes.
 
 ---
 
