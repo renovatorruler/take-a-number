@@ -1,0 +1,148 @@
+{
+  "milestone": "M1",
+  "name": "Core Flow",
+  "maxIterations": 25,
+  "tasks": [
+    {
+      "id": "m1-t1",
+      "name": "Project Scaffold + Test Setup",
+      "description": "Set up project structure, dependencies, and test infrastructure",
+      "dependencies": [],
+      "acceptanceCriteria": [
+        "index.html exists and loads without errors",
+        "CSS file with base styles (colors from PRD) exists",
+        "js/app.js with Preact + HTM + hash router working",
+        "Empty component files created for Landing, Queue, Admin, Display",
+        "package.json with vitest and playwright dev dependencies",
+        "vitest.config.js configured",
+        "playwright.config.js configured",
+        "npm test runs (even if no tests yet)",
+        "npm run test:e2e runs (even if no tests yet)",
+        "python3 -m http.server 8080 serves the app",
+        "Hash routes (#/, #/q/test, #/admin/test) render correct components"
+      ],
+      "files": [
+        "index.html",
+        "css/style.css",
+        "js/app.js",
+        "js/components/Landing.js",
+        "js/components/Queue.js",
+        "js/components/Admin.js",
+        "js/components/Display.js",
+        "package.json",
+        "vitest.config.js",
+        "playwright.config.js"
+      ]
+    },
+    {
+      "id": "m1-t2",
+      "name": "GunDB Helpers + Unit Tests",
+      "description": "Create GunDB connection and CRUD helpers with full test coverage",
+      "dependencies": ["m1-t1"],
+      "acceptanceCriteria": [
+        "js/lib/gun.js exports: initGun, createStore, getStore, updateStore, createTicket, getTickets",
+        "Connects to public Gun relay (gun-manhattan.herokuapp.com)",
+        "Store CRUD operations work",
+        "Ticket CRUD operations work",
+        "Unit tests for all exported functions",
+        "npm test passes with >80% coverage on gun.js"
+      ],
+      "files": [
+        "js/lib/gun.js",
+        "tests/unit/gun.test.js"
+      ]
+    },
+    {
+      "id": "m1-t3",
+      "name": "PoW Wrapper + Unit Tests",
+      "description": "Create proof-of-work wrapper using GunDB SEA with tests",
+      "dependencies": ["m1-t1"],
+      "acceptanceCriteria": [
+        "js/lib/pow.js exports: generateKeyPair, doProofOfWork, verifyWork",
+        "generateKeyPair() returns SEA keypair after ~2-3 seconds",
+        "Keypair stored in localStorage",
+        "Same device returns existing keypair",
+        "Unit tests mock SEA and verify behavior",
+        "npm test passes"
+      ],
+      "files": [
+        "js/lib/pow.js",
+        "js/lib/storage.js",
+        "tests/unit/pow.test.js",
+        "tests/unit/storage.test.js"
+      ]
+    },
+    {
+      "id": "m1-t4",
+      "name": "Landing Page + Store Creation",
+      "description": "Landing page with store name input, PoW, QR code generation",
+      "dependencies": ["m1-t2", "m1-t3"],
+      "acceptanceCriteria": [
+        "Landing component renders at #/",
+        "Store name input field with validation (1-50 chars, XSS safe)",
+        "Create Queue button triggers PoW",
+        "Fun animation during PoW (not loading spinner)",
+        "On success: generates UUID for store and admin URLs",
+        "Shows QR code (using qrcode.js) for customer URL",
+        "Shows admin URL (copyable)",
+        "Download QR code as PNG button works",
+        "E2E test: fill name → create → see QR code",
+        "Error state if PoW fails",
+        "Loading state during PoW"
+      ],
+      "files": [
+        "js/components/Landing.js",
+        "js/utils/qr.js",
+        "tests/e2e/create-queue.spec.js"
+      ]
+    },
+    {
+      "id": "m1-t5",
+      "name": "Queue Page + Ticket Dispenser",
+      "description": "Customer queue page with drag-to-pull ticket dispenser and take-a-number flow",
+      "dependencies": ["m1-t4"],
+      "acceptanceCriteria": [
+        "Queue component renders at #/q/{storeId}",
+        "Shows store name from GunDB",
+        "Ticket dispenser UI (deli counter aesthetic)",
+        "Drag down OR tap to pull ticket",
+        "PoW runs with fun animation",
+        "Red paper ticket reveals with number",
+        "Shows: your number, now serving, people ahead",
+        "Real-time updates via GunDB subscription",
+        "Same device returns existing ticket (no duplicate)",
+        "Incognito detection with friendly message",
+        "PWA install prompt (Add to Home Screen)",
+        "E2E test: visit queue → take number → see ticket",
+        "Invalid storeId shows error page"
+      ],
+      "files": [
+        "js/components/Queue.js",
+        "js/components/Ticket.js",
+        "js/components/Dispenser.js",
+        "tests/e2e/take-number.spec.js"
+      ]
+    },
+    {
+      "id": "m1-t6",
+      "name": "Mark as Served + Social Prompt",
+      "description": "Customer marks themselves served, sees thank you with social follow",
+      "dependencies": ["m1-t5"],
+      "acceptanceCriteria": [
+        "I've Been Served button on Queue page",
+        "Confirmation dialog before marking",
+        "Updates ticket status in GunDB",
+        "Shows thank you screen with social follow prompt",
+        "Twitter/X follow link (placeholder @handle for now)",
+        "Take Another Number option",
+        "E2E test: full flow - create queue → take number → mark served",
+        "Queue position updates for other users when someone marked served"
+      ],
+      "files": [
+        "js/components/Queue.js",
+        "js/components/ServedScreen.js",
+        "tests/e2e/full-flow.spec.js"
+      ]
+    }
+  ]
+}
