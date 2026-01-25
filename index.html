@@ -6,7 +6,7 @@
   <title>Take a Number</title>
   <link rel="stylesheet" href="css/style.css">
   
-  <!-- Preact + HTM (JSX-like without build) -->
+  <!-- Preact + HTM -->
   <script src="https://unpkg.com/preact@10/dist/preact.umd.js"></script>
   <script src="https://unpkg.com/preact@10/hooks/dist/hooks.umd.js"></script>
   <script src="https://unpkg.com/htm@3/dist/htm.umd.js"></script>
@@ -21,24 +21,7 @@
 <body>
   <div id="app"></div>
   
-  <!-- Lib files -->
-  <script src="js/lib/storage.js"></script>
-  <script src="js/lib/pow.js"></script>
-  <script src="js/lib/gun.js"></script>
-  
-  <!-- Utils -->
-  <script src="js/utils/qr.js"></script>
-  
-  <!-- Components (loaded in order) -->
-  <script src="js/components/Ticket.js"></script>
-  <script src="js/components/Dispenser.js"></script>
-  <script src="js/components/ServedScreen.js"></script>
-  <script src="js/components/Landing.js"></script>
-  <script src="js/components/Queue.js"></script>
-  <script src="js/components/Admin.js"></script>
-  <script src="js/components/Display.js"></script>
-  
-  <!-- Main app (loads last) -->
-  <script src="js/app.js"></script>
+  <!-- ReScript compiled and bundled app -->
+  <script src="dist/app.bundle.js"></script>
 </body>
 </html>

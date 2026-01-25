@@ -1,0 +1,27 @@
+{
+  "name": "take-a-number",
+  "sources": [
+    {
+      "dir": "src",
+      "subdirs": true
+    }
+  ],
+  "package-specs": [
+    {
+      "module": "esmodule",
+      "in-source": false
+    }
+  ],
+  "suffix": ".js",
+  "dependencies": [
+    "@rescript/core",
+    "@rescript/react"
+  ],
+  "jsx": {
+    "version": 4,
+    "mode": "automatic"
+  },
+  "warnings": {
+    "error": "+5"
+  }
+}

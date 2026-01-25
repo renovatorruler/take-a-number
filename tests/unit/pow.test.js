@@ -29,7 +29,7 @@ beforeEach(() => {
 });
 
 // Import modules
-const powModule = await import('../../js/lib/pow.js');
+const powModule = await import('../../lib/es6/src/lib/Pow.js');
 
 describe('PoW Wrapper', () => {
   describe('generateKeyPair', () => {

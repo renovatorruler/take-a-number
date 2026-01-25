@@ -1836,6 +1836,16 @@ var TakeANumber = (() => {
                     className: "text-muted"
                   }),
                   JsxRuntime7.jsx("div", {
+                    children: JsxRuntime7.jsx("a", {
+                      children: "\u{1F517} Open Queue Page",
+                      className: "customer-url-link",
+                      "data-testid": "customer-url-link",
+                      href: createdStore.customerUrl,
+                      target: "_blank"
+                    }),
+                    className: "customer-url-container mt-2 mb-2"
+                  }),
+                  JsxRuntime7.jsx("div", {
                     children: JsxRuntime7.jsx("img", {
                       className: "qr-code-image",
                       "data-testid": "qr-code",

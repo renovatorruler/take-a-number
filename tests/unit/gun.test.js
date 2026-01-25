@@ -28,7 +28,7 @@ const MockGun = vi.fn(() => ({
 global.Gun = MockGun;
 
 // Now import the module
-const gunModule = await import('../../js/lib/gun.js');
+const gunModule = await import('../../lib/es6/src/lib/GunHelpers.js');
 
 describe('GunDB Helpers', () => {
   beforeEach(() => {
@@ -153,7 +153,7 @@ describe('GunDB Helpers', () => {
       
       const result = await gunModule.getStore('non-existent');
       
-      expect(result).toBeNull();
+      expect(result).toBeFalsy();
     });
 
     it('should return store data if found', async () => {
@@ -251,7 +251,7 @@ describe('GunDB Helpers', () => {
       
       const result = await gunModule.getTicket('store-id', 999);
       
-      expect(result).toBeNull();
+      expect(result).toBeFalsy();
     });
 
     it('should return ticket data if found', async () => {

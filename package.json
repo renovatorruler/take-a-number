@@ -4,17 +4,24 @@
   "description": "Zero-friction queue management. No signup. No app. Just scan and wait.",
   "type": "module",
   "scripts": {
+    "build:res": "rescript build",
+    "build:bundle": "node build.mjs",
+    "build": "npm run build:res && npm run build:bundle",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
+    "test:e2e": "npm run build && playwright test",
+    "test:e2e:ui": "npm run build && playwright test --ui",
     "serve": "python3 -m http.server 8080"
   },
   "devDependencies": {
     "@playwright/test": "^1.44.0",
+    "@rescript/core": "^1.6.1",
+    "@rescript/react": "^0.14.0",
     "@vitest/coverage-v8": "^1.6.1",
+    "esbuild": "^0.27.2",
     "jsdom": "^24.0.0",
     "playwright": "^1.44.0",
+    "rescript": "^12.1.0",
     "vitest": "^1.6.0"
   },
   "keywords": [

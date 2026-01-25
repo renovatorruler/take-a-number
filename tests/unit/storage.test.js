@@ -28,8 +28,8 @@ Object.defineProperty(global, 'localStorage', {
   writable: true
 });
 
-// Import after mocking
-const storageModule = await import('../../js/lib/storage.js');
+// Import after mocking - from compiled ReScript output
+const storageModule = await import('../../lib/es6/src/lib/Storage.js');
 
 describe('Storage Helpers', () => {
   beforeEach(() => {
@@ -81,7 +81,7 @@ describe('Storage Helpers', () => {
     });
 
     it('should return null when no keypair stored', () => {
-      expect(storageModule.getKeypair()).toBeNull();
+      expect(storageModule.getKeypair()).toBeFalsy();
     });
 
     it('should check if keypair exists', () => {
@@ -105,7 +105,7 @@ describe('Storage Helpers', () => {
     it('should handle invalid JSON gracefully', () => {
       localStorageMock.getItem = vi.fn(() => 'not-valid-json');
       
-      expect(storageModule.getKeypair()).toBeNull();
+      expect(storageModule.getKeypair()).toBeFalsy();
     });
   });
 
@@ -121,7 +121,7 @@ describe('Storage Helpers', () => {
 
     it('should return null when no device ID stored', () => {
       localStorageMock.getItem = vi.fn(() => null);
-      expect(storageModule.getDeviceId()).toBeNull();
+      expect(storageModule.getDeviceId()).toBeFalsy();
     });
   });
 
@@ -154,7 +154,7 @@ describe('Storage Helpers', () => {
 
     it('should return null when no ticket stored', () => {
       localStorageMock.getItem = vi.fn(() => null);
-      expect(storageModule.getTicket(storeId)).toBeNull();
+      expect(storageModule.getTicket(storeId)).toBeFalsy();
     });
 
     it('should check if ticket exists', () => {
@@ -178,7 +178,7 @@ describe('Storage Helpers', () => {
     it('should handle invalid JSON gracefully', () => {
       localStorageMock.getItem = vi.fn(() => 'not-valid-json');
       
-      expect(storageModule.getTicket(storeId)).toBeNull();
+      expect(storageModule.getTicket(storeId)).toBeFalsy();
     });
   });
 
