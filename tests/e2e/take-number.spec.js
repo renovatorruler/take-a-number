@@ -13,9 +13,8 @@ async function createStoreAndGetId(page, storeName) {
   // Wait for QR code section
   await expect(page.getByTestId('qr-section')).toBeVisible({ timeout: 30000 });
   
-  // Get storeId from the customer URL hidden input
+  // Get storeId from the customer URL
   const customerUrl = await page.getByTestId('customer-url').inputValue();
-  // URL format: baseurl#/q/{storeId}
   const storeId = customerUrl.split('#/q/')[1];
   
   return storeId;
@@ -26,7 +25,7 @@ test.describe('Take a Number Flow', () => {
     const storeId = await createStoreAndGetId(page, 'Dispenser Test Store');
     expect(storeId).toBeTruthy();
     
-    await page.evaluate(() => localStorage.clear());
+    // Navigate directly to queue (don't clear localStorage - Gun needs it)
     await page.goto(`/#/q/${storeId}`);
     
     await expect(page.getByTestId('queue-page')).toBeVisible();
@@ -38,7 +37,7 @@ test.describe('Take a Number Flow', () => {
     const storeId = await createStoreAndGetId(page, 'Take Number Store');
     expect(storeId).toBeTruthy();
     
-    await page.evaluate(() => localStorage.clear());
+    // Navigate to queue
     await page.goto(`/#/q/${storeId}`);
     
     // Click dispenser
@@ -70,7 +69,6 @@ test.describe('Queue Page UI', () => {
     const storeId = await createStoreAndGetId(page, 'UI Test Store');
     expect(storeId).toBeTruthy();
     
-    await page.evaluate(() => localStorage.clear());
     await page.goto(`/#/q/${storeId}`);
     
     await expect(page.getByTestId('dispenser')).toBeVisible({ timeout: 10000 });
@@ -83,8 +81,7 @@ test.describe('Full Create and Take Number Flow', () => {
     const storeId = await createStoreAndGetId(page, 'Complete Flow Store');
     expect(storeId).toBeTruthy();
     
-    // Go to queue as customer
-    await page.evaluate(() => localStorage.clear());
+    // Go to queue 
     await page.goto(`/#/q/${storeId}`);
     
     // Verify store name
@@ -108,7 +105,6 @@ test.describe('Full Create and Take Number Flow', () => {
     const storeId = await createStoreAndGetId(page, 'Direct Access Store');
     expect(storeId).toBeTruthy();
     
-    await page.evaluate(() => localStorage.clear());
     await page.goto(`/#/q/${storeId}`);
     
     // Take a number

@@ -349,7 +349,7 @@ const Queue = ({ storeId }) => {
         <div class="current-status mt-4">
           <div class="status">
             <span class="status-label">Now Serving</span>
-            <span class="status-value">#${store.nowServing || 0}</span>
+            <span class="status-value" data-testid="now-serving">#${store.nowServing || 0}</span>
           </div>
         </div>
       </div>

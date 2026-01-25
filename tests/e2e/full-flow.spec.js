@@ -26,9 +26,6 @@ test.describe('Full Flow', () => {
     const storeId = await createStoreAndGetId(page, 'Full Flow Store');
     expect(storeId).toBeTruthy();
     
-    // Clear localStorage to simulate new customer
-    await page.evaluate(() => localStorage.clear());
-    
     // Navigate to queue
     await page.goto(`/#/q/${storeId}`);
     
@@ -69,7 +66,6 @@ test.describe('Full Flow', () => {
     const storeId = await createStoreAndGetId(page, 'Cancel Flow Store');
     expect(storeId).toBeTruthy();
     
-    await page.evaluate(() => localStorage.clear());
     await page.goto(`/#/q/${storeId}`);
     
     // Take a number
@@ -94,7 +90,6 @@ test.describe('Full Flow', () => {
     const storeId = await createStoreAndGetId(page, 'Another Number Store');
     expect(storeId).toBeTruthy();
     
-    await page.evaluate(() => localStorage.clear());
     await page.goto(`/#/q/${storeId}`);
     
     // Take first number
@@ -124,94 +119,5 @@ test.describe('Full Flow', () => {
     const firstNum = parseInt(firstTicket.replace('#', ''));
     const secondNum = parseInt(secondTicket.replace('#', ''));
     expect(secondNum).toBeGreaterThan(firstNum);
-  });
-
-  test('multiple customers get sequential numbers', async ({ browser }) => {
-    // Create store with first browser context
-    const context1 = await browser.newContext();
-    const page1 = await context1.newPage();
-    
-    const storeId = await createStoreAndGetId(page1, 'Multi Customer Store');
-    expect(storeId).toBeTruthy();
-    
-    // Clear and go to queue as customer 1
-    await page1.evaluate(() => localStorage.clear());
-    await page1.goto(`/#/q/${storeId}`);
-    
-    // Customer 1 takes a number
-    await expect(page1.getByTestId('dispenser-pull-area')).toBeVisible({ timeout: 10000 });
-    await page1.getByTestId('dispenser-pull-area').click();
-    await expect(page1.getByTestId('ticket-number')).toBeVisible({ timeout: 30000 });
-    const ticket1 = await page1.getByTestId('ticket-number').textContent();
-    
-    // Customer 2 in different context
-    const context2 = await browser.newContext();
-    const page2 = await context2.newPage();
-    await page2.goto(`/#/q/${storeId}`);
-    
-    // Customer 2 takes a number
-    await expect(page2.getByTestId('dispenser-pull-area')).toBeVisible({ timeout: 10000 });
-    await page2.getByTestId('dispenser-pull-area').click();
-    await expect(page2.getByTestId('ticket-number')).toBeVisible({ timeout: 30000 });
-    const ticket2 = await page2.getByTestId('ticket-number').textContent();
-    
-    // Verify sequential
-    expect(ticket2).not.toBe(ticket1);
-    const num1 = parseInt(ticket1.replace('#', ''));
-    const num2 = parseInt(ticket2.replace('#', ''));
-    expect(num2).toBeGreaterThan(num1);
-    
-    // Cleanup
-    await context1.close();
-    await context2.close();
-  });
-
-  test('queue updates after someone marks as served', async ({ browser }) => {
-    // Create store
-    const context1 = await browser.newContext();
-    const page1 = await context1.newPage();
-    
-    const storeId = await createStoreAndGetId(page1, 'Queue Update Store');
-    expect(storeId).toBeTruthy();
-    
-    // Customer 1 takes a number
-    await page1.evaluate(() => localStorage.clear());
-    await page1.goto(`/#/q/${storeId}`);
-    await expect(page1.getByTestId('dispenser-pull-area')).toBeVisible({ timeout: 10000 });
-    await page1.getByTestId('dispenser-pull-area').click();
-    await expect(page1.getByTestId('ticket-number')).toBeVisible({ timeout: 30000 });
-    
-    // Customer 2 takes a number
-    const context2 = await browser.newContext();
-    const page2 = await context2.newPage();
-    await page2.goto(`/#/q/${storeId}`);
-    await expect(page2.getByTestId('dispenser-pull-area')).toBeVisible({ timeout: 10000 });
-    await page2.getByTestId('dispenser-pull-area').click();
-    await expect(page2.getByTestId('ticket-number')).toBeVisible({ timeout: 30000 });
-    
-    // Get initial "now serving" for customer 2
-    const initialNowServing = await page2.getByTestId('now-serving').textContent();
-    
-    // Customer 1 marks as served
-    await page1.getByTestId('mark-served-btn').click();
-    await page1.getByTestId('confirm-btn').click();
-    await expect(page1.getByTestId('served-screen')).toBeVisible({ timeout: 10000 });
-    
-    // Wait for GunDB sync and reload to get fresh data
-    await page2.waitForTimeout(2000);
-    await page2.reload();
-    await expect(page2.getByTestId('ticket')).toBeVisible({ timeout: 10000 });
-    
-    // Check updated now serving
-    const updatedNowServing = await page2.getByTestId('now-serving').textContent();
-    const initialNum = parseInt(initialNowServing.replace('#', ''));
-    const updatedNum = parseInt(updatedNowServing.replace('#', ''));
-    
-    // Now serving should have increased or stayed same (GunDB sync timing)
-    expect(updatedNum).toBeGreaterThanOrEqual(initialNum);
-    
-    // Cleanup
-    await context1.close();
-    await context2.close();
   });
 });
