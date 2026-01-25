@@ -194,6 +194,29 @@ Note: These aren't "modes" to switch between — it's simply whether someone wit
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1/build/qrcode.min.js"></script>
 ```
 
+### Testing Stack
+
+| Type | Tool | Rationale |
+|------|------|-----------|
+| Unit Tests | Vitest | Fast, ESM-native, works with Preact |
+| E2E Tests | Playwright | Browser automation, already in .stewie scripts |
+| Test Runner | Node | Run tests via `npm test` |
+
+```bash
+# Directory structure
+tests/
+├── unit/
+│   ├── gun.test.js       # GunDB helpers
+│   ├── pow.test.js       # PoW wrapper
+│   └── components/       # Component tests
+└── e2e/
+    ├── create-queue.spec.js
+    ├── take-number.spec.js
+    └── mark-served.spec.js
+```
+
+**Note:** While the app runs without a build step (CDN), tests use Node for convenience. This is acceptable since tests are dev-only.
+
 ### Why Preact + HTM (no build step)
 
 ```javascript
@@ -457,9 +480,21 @@ take-a-number/
 │   │   └── storage.js      # localStorage helpers
 │   └── utils/
 │       └── qr.js           # QR code generation
+├── tests/
+│   ├── unit/
+│   │   ├── gun.test.js     # GunDB helper tests
+│   │   ├── pow.test.js     # PoW wrapper tests
+│   │   └── storage.test.js # Storage helper tests
+│   └── e2e/
+│       ├── create-queue.spec.js
+│       ├── take-number.spec.js
+│       └── full-flow.spec.js
 ├── assets/
 │   ├── bell.mp3            # Deli counter bell sound
 │   └── ticket.svg          # Red ticket graphic
+├── package.json            # Dev dependencies (test tools only)
+├── vitest.config.js        # Unit test config
+├── playwright.config.js    # E2E test config
 ├── PRD.md
 ├── README.md
 └── .stewie/
@@ -492,17 +527,21 @@ Single `index.html` handles all routes via hash changes.
 ## Milestones
 
 ### M1: Core Flow
+- [ ] Project scaffold + test setup (Vitest + Playwright)
 - [ ] Landing page with store creation (PoW)
 - [ ] QR code generation
 - [ ] Customer queue page with ticket dispenser UI
 - [ ] Take a number (drag/tap + PoW)
 - [ ] View position (real-time via GunDB)
 - [ ] Mark as served → social follow prompt
+- [ ] **Unit tests for all lib/ functions**
+- [ ] **E2E test: create queue → take number → mark served**
 
 ### M2: Operator Features  
 - [ ] Admin panel (view queue, mark served with PoW)
 - [ ] Display screen for TV
 - [ ] Browser notifications + sound
+- [ ] **E2E test: operator marks ticket served**
 
 ### M3: Polish
 - [ ] Time-based expiry
@@ -511,6 +550,7 @@ Single `index.html` handles all routes via hash changes.
 - [ ] Incognito detection
 - [ ] Offline handling
 - [ ] Analytics (served today/hour)
+- [ ] **E2E test: expiry scenarios**
 
 ---
 

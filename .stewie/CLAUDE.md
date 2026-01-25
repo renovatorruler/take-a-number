@@ -136,14 +136,43 @@ You have access to:
 - [ ] No console errors
 - [ ] Feature works as specified in PRD
 - [ ] Works on mobile viewport (responsive)
+- [ ] Unit tests pass (if lib/ code modified)
+- [ ] E2E tests pass (if user flow affected)
 
 **Verification steps:**
 ```bash
-# Start local server
 cd /Users/ren/dev/take-a-number
-python3 -m http.server 8080
 
+# Run unit tests
+npm test
+
+# Run E2E tests
+npm run test:e2e
+
+# Start local server for manual verification
+python3 -m http.server 8080
 # Then use browser tool to verify at http://localhost:8080
+```
+
+### 4. Testing Requirements
+
+**Unit tests (Vitest):**
+- Test all functions in `js/lib/` and `js/utils/`
+- Mock GunDB for isolated tests
+- Keep tests fast (< 1 second each)
+
+**E2E tests (Playwright):**
+- Test complete user flows
+- One spec file per major flow
+- Use data-testid attributes for selectors
+
+```javascript
+// Example E2E test structure
+test('customer can take a number', async ({ page }) => {
+  await page.goto('http://localhost:8080/#/q/test-store');
+  await page.click('[data-testid="take-number"]');
+  await expect(page.locator('[data-testid="ticket-number"]')).toBeVisible();
+});
 ```
 
 ### 4. File Organization
