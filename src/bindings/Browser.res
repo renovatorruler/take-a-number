@@ -44,21 +44,20 @@ module Location = {
 
 // Crypto
 module Crypto = {
-  @val @scope(("window", "crypto")) @return(nullable)
-  external randomUUID: option<unit => string> = "randomUUID"
-
-  let generateUUID = (): string => {
-    switch randomUUID {
-    | Some(fn) => fn()
-    | None =>
-      // Fallback for older browsers
-      let s4 = () => {
-        let n = Math.random() *. 65536.0
-        Float.toInt(n)->Int.toString(~radix=16)->String.padStart(4, "0")
+  // Call randomUUID directly on window.crypto to preserve 'this' binding
+  let generateUUID: unit => string = %raw(`
+    function() {
+      if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+        return window.crypto.randomUUID();
       }
-      `${s4()}${s4()}-${s4()}-4${s4()->String.slice(~start=1, ~end=4)}-${s4()}-${s4()}${s4()}${s4()}`
+      // Fallback for older browsers
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0;
+        var v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
     }
-  }
+  `)
 }
 
 // Window
