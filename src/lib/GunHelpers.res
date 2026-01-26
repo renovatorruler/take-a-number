@@ -3,8 +3,11 @@
 // Gun instance (singleton)
 let gunInstance: ref<option<Gun.gun>> = ref(None)
 
-// Default peers
-let defaultPeers = ["https://gun-manhattan.herokuapp.com/gun"]
+// Default peers (multiple for redundancy)
+let defaultPeers = [
+  "https://relay.peer.ooo/gun",
+  "https://gun-manhattan.herokuapp.com/gun",  // backup, often down
+]
 
 // Initialize Gun connection
 let initGun = (~peers: option<array<string>>=?): Gun.gun => {

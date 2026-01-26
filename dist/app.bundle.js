@@ -670,7 +670,10 @@ var TakeANumber = (() => {
   var gunInstance = {
     contents: void 0
   };
-  var defaultPeers = ["https://gun-manhattan.herokuapp.com/gun"];
+  var defaultPeers = [
+    "https://relay.peer.ooo/gun",
+    "https://gun-manhattan.herokuapp.com/gun"
+  ];
   function initGun(peers) {
     let gun = gunInstance.contents;
     if (gun !== void 0) {
