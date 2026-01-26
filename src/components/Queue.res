@@ -294,24 +294,41 @@ let make = (~storeId: string) => {
               <div className="container">
                 <Ticket number=t.number storeName=s.name isRevealing=true />
                 <div className="queue-status mt-3" dataTestId="queue-status">
-                  <div className="status-item">
-                    <span className="status-label"> {React.string("Now Serving")} </span>
-                    <span className="status-value" dataTestId="now-serving">
-                      {React.string(`#${Int.toString(s.nowServing)}`)}
-                    </span>
-                  </div>
-                  <div className="status-item">
-                    <span className="status-label"> {React.string("Ahead of You")} </span>
-                    <span className="status-value" dataTestId="people-ahead">
-                      {React.string(
-                        `${Int.toString(position)} ${position == 1 ? "person" : "people"}`,
-                      )}
-                    </span>
-                  </div>
+                  {position == 0
+                    ? // User is being served - they ARE the "now serving"
+                      <div className="status-item">
+                        <span className="status-label"> {React.string("Your Number")} </span>
+                        <span className="status-value" dataTestId="now-serving">
+                          {React.string(`#${Int.toString(t.number)}`)}
+                        </span>
+                      </div>
+                    : // User is waiting - show who was recently served
+                      <>
+                        <div className="status-item">
+                          <span className="status-label">
+                            {React.string(s.nowServing > 0 ? "Recently Served" : "Queue Status")}
+                          </span>
+                          <span className="status-value" dataTestId="now-serving">
+                            {React.string(
+                              s.nowServing > 0
+                                ? `#${Int.toString(s.nowServing)}`
+                                : "No one yet",
+                            )}
+                          </span>
+                        </div>
+                        <div className="status-item">
+                          <span className="status-label"> {React.string("Ahead of You")} </span>
+                          <span className="status-value" dataTestId="people-ahead">
+                            {React.string(
+                              `${Int.toString(position)} ${position == 1 ? "person" : "people"}`,
+                            )}
+                          </span>
+                        </div>
+                      </>}
                 </div>
                 {position == 0
                   ? <div className="your-turn-alert" dataTestId="your-turn">
-                      {React.string("🔔 It's your turn!")}
+                      {React.string("It's your turn!")}
                     </div>
                   : React.null}
                 <button
@@ -346,6 +363,12 @@ let make = (~storeId: string) => {
               <h1 className="page-title" dataTestId="store-name"> {React.string(s.name)} </h1>
             </div>
             <div className="container">
+              <div className="next-number-preview" dataTestId="next-number-preview">
+                <span className="preview-label"> {React.string("Next number:")} </span>
+                <span className="preview-number">
+                  {React.string(`#${Int.toString(s.currentNumber + 1)}`)}
+                </span>
+              </div>
               <Dispenser onPull={() => handleTakeNumber()->ignore} isDisabled=isTakingNumber />
               {isTakingNumber
                 ? <div className="taking-number-animation" dataTestId="taking-number">
@@ -362,9 +385,13 @@ let make = (~storeId: string) => {
               }}
               <div className="current-status mt-4">
                 <div className="status">
-                  <span className="status-label"> {React.string("Now Serving")} </span>
+                  <span className="status-label">
+                    {React.string(s.nowServing > 0 ? "Recently Served" : "Queue Status")}
+                  </span>
                   <span className="status-value" dataTestId="now-serving">
-                    {React.string(`#${Int.toString(s.nowServing)}`)}
+                    {React.string(
+                      s.nowServing > 0 ? `#${Int.toString(s.nowServing)}` : "No one yet",
+                    )}
                   </span>
                 </div>
               </div>

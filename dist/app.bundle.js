@@ -1442,42 +1442,57 @@ var TakeANumber = (() => {
                     storeName: store.name,
                     isRevealing: true
                   }),
-                  JsxRuntime5.jsxs("div", {
-                    children: [
-                      JsxRuntime5.jsxs("div", {
-                        children: [
-                          JsxRuntime5.jsx("span", {
-                            children: "Now Serving",
-                            className: "status-label"
-                          }),
-                          JsxRuntime5.jsx("span", {
-                            children: `#` + store.nowServing.toString(),
-                            className: "status-value",
-                            "data-testid": "now-serving"
-                          })
-                        ],
-                        className: "status-item"
-                      }),
-                      JsxRuntime5.jsxs("div", {
-                        children: [
-                          JsxRuntime5.jsx("span", {
-                            children: "Ahead of You",
-                            className: "status-label"
-                          }),
-                          JsxRuntime5.jsx("span", {
-                            children: position.toString() + ` ` + (position === 1 ? "person" : "people"),
-                            className: "status-value",
-                            "data-testid": "people-ahead"
-                          })
-                        ],
-                        className: "status-item"
-                      })
-                    ],
+                  JsxRuntime5.jsx("div", {
+                    children: position === 0 ? JsxRuntime5.jsxs("div", {
+                      children: [
+                        JsxRuntime5.jsx("span", {
+                          children: "Your Number",
+                          className: "status-label"
+                        }),
+                        JsxRuntime5.jsx("span", {
+                          children: `#` + ticket.number.toString(),
+                          className: "status-value",
+                          "data-testid": "now-serving"
+                        })
+                      ],
+                      className: "status-item"
+                    }) : JsxRuntime5.jsxs(JsxRuntime5.Fragment, {
+                      children: [
+                        JsxRuntime5.jsxs("div", {
+                          children: [
+                            JsxRuntime5.jsx("span", {
+                              children: store.nowServing > 0 ? "Recently Served" : "Queue Status",
+                              className: "status-label"
+                            }),
+                            JsxRuntime5.jsx("span", {
+                              children: store.nowServing > 0 ? `#` + store.nowServing.toString() : "No one yet",
+                              className: "status-value",
+                              "data-testid": "now-serving"
+                            })
+                          ],
+                          className: "status-item"
+                        }),
+                        JsxRuntime5.jsxs("div", {
+                          children: [
+                            JsxRuntime5.jsx("span", {
+                              children: "Ahead of You",
+                              className: "status-label"
+                            }),
+                            JsxRuntime5.jsx("span", {
+                              children: position.toString() + ` ` + (position === 1 ? "person" : "people"),
+                              className: "status-value",
+                              "data-testid": "people-ahead"
+                            })
+                          ],
+                          className: "status-item"
+                        })
+                      ]
+                    }),
                     className: "queue-status mt-3",
                     "data-testid": "queue-status"
                   }),
                   position === 0 ? JsxRuntime5.jsx("div", {
-                    children: "\u{1F514} It's your turn!",
+                    children: "It's your turn!",
                     className: "your-turn-alert",
                     "data-testid": "your-turn"
                   }) : null,
@@ -1528,6 +1543,20 @@ var TakeANumber = (() => {
             }),
             JsxRuntime5.jsxs("div", {
               children: [
+                JsxRuntime5.jsxs("div", {
+                  children: [
+                    JsxRuntime5.jsx("span", {
+                      children: "Next number:",
+                      className: "preview-label"
+                    }),
+                    JsxRuntime5.jsx("span", {
+                      children: `#` + (store.currentNumber + 1 | 0).toString(),
+                      className: "preview-number"
+                    })
+                  ],
+                  className: "next-number-preview",
+                  "data-testid": "next-number-preview"
+                }),
                 JsxRuntime5.jsx(make4, {
                   onPull: () => {
                     handleTakeNumber();
@@ -1556,11 +1585,11 @@ var TakeANumber = (() => {
                   children: JsxRuntime5.jsxs("div", {
                     children: [
                       JsxRuntime5.jsx("span", {
-                        children: "Now Serving",
+                        children: store.nowServing > 0 ? "Recently Served" : "Queue Status",
                         className: "status-label"
                       }),
                       JsxRuntime5.jsx("span", {
-                        children: `#` + store.nowServing.toString(),
+                        children: store.nowServing > 0 ? `#` + store.nowServing.toString() : "No one yet",
                         className: "status-value",
                         "data-testid": "now-serving"
                       })
@@ -1585,37 +1614,177 @@ var TakeANumber = (() => {
   var make6 = Queue;
 
   // lib/es6/src/App.js
-  var React5 = __toESM(require_react(), 1);
+  var React6 = __toESM(require_react(), 1);
 
   // lib/es6/src/components/Display.js
+  var React4 = __toESM(require_react(), 1);
   var JsxRuntime6 = __toESM(require_jsx_runtime(), 1);
   function Display(props) {
-    return JsxRuntime6.jsxs("div", {
-      children: [
-        JsxRuntime6.jsxs("div", {
-          children: [
-            JsxRuntime6.jsx("h1", {
+    let storeId = props.storeId;
+    let match = React4.useState(() => {
+    });
+    let setStore = match[1];
+    let store = match[0];
+    let match$1 = React4.useState(() => true);
+    let setIsLoading = match$1[1];
+    let match$2 = React4.useState(() => {
+    });
+    let setError = match$2[1];
+    let error = match$2[0];
+    let unsubscribeRef = React4.useRef(void 0);
+    let loadStore = async () => {
+      try {
+        let storeData = await getStore(storeId, void 0);
+        if (storeData !== void 0) {
+          setStore((param) => storeData);
+        } else {
+          setError((param) => "Queue not found");
+        }
+      } catch (raw_err) {
+        let err = internalToException(raw_err);
+        if (err.RE_EXN_ID === "JsExn") {
+          console.error(err._1);
+          setError((param) => "Failed to load queue");
+        } else {
+          throw err;
+        }
+      }
+      return setIsLoading((param) => false);
+    };
+    React4.useEffect(() => {
+      initGun(void 0);
+      loadStore();
+      return () => {
+        let unsub = unsubscribeRef.current;
+        if (unsub !== void 0) {
+          return unsub();
+        }
+      };
+    }, []);
+    React4.useEffect(() => {
+      if (store === void 0) {
+        return;
+      }
+      let unsub = subscribeToStore(storeId, (updatedStore) => setStore((param) => updatedStore));
+      unsubscribeRef.current = unsub;
+      return () => {
+        unsub();
+        unsubscribeRef.current = void 0;
+      };
+    }, [isSome(store)]);
+    if (match$1[0]) {
+      return JsxRuntime6.jsx("div", {
+        children: JsxRuntime6.jsx("div", {
+          children: "Loading...",
+          className: "loading"
+        }),
+        className: "page display-page",
+        "data-testid": "display-page"
+      });
+    }
+    if (error !== void 0 && store === void 0) {
+      return JsxRuntime6.jsxs("div", {
+        children: [
+          JsxRuntime6.jsx("div", {
+            children: JsxRuntime6.jsx("h1", {
               children: "Display",
               className: "page-title"
             }),
-            JsxRuntime6.jsx("p", {
-              children: `Store: ` + props.storeId,
-              className: "page-subtitle"
-            })
-          ],
-          className: "page-header"
-        }),
-        JsxRuntime6.jsx("div", {
-          children: JsxRuntime6.jsx("p", {
-            children: "Display screen - coming soon",
-            className: "text-center"
+            className: "page-header"
           }),
-          className: "container"
-        })
-      ],
-      className: "page",
-      "data-testid": "display-page"
-    });
+          JsxRuntime6.jsx("div", {
+            children: JsxRuntime6.jsx("div", {
+              children: JsxRuntime6.jsx("p", {
+                children: error
+              }),
+              className: "error",
+              "data-testid": "display-error"
+            }),
+            className: "container"
+          })
+        ],
+        className: "page display-page",
+        "data-testid": "display-page"
+      });
+    }
+    if (store !== void 0) {
+      return JsxRuntime6.jsxs("div", {
+        children: [
+          JsxRuntime6.jsx("div", {
+            children: JsxRuntime6.jsx("h1", {
+              children: store.name,
+              className: "page-title",
+              "data-testid": "store-name"
+            }),
+            className: "page-header"
+          }),
+          JsxRuntime6.jsxs("div", {
+            children: [
+              JsxRuntime6.jsxs("div", {
+                children: [
+                  JsxRuntime6.jsx("div", {
+                    children: store.nowServing > 0 ? "Now Serving" : "Waiting for first customer",
+                    className: "display-label"
+                  }),
+                  store.nowServing > 0 ? JsxRuntime6.jsx("div", {
+                    children: `#` + store.nowServing.toString(),
+                    className: "display-number",
+                    "data-testid": "now-serving-number"
+                  }) : null
+                ],
+                className: "display-now-serving",
+                "data-testid": "now-serving-display"
+              }),
+              JsxRuntime6.jsxs("div", {
+                children: [
+                  JsxRuntime6.jsxs("div", {
+                    children: [
+                      JsxRuntime6.jsx("span", {
+                        children: "Next Number",
+                        className: "stat-label"
+                      }),
+                      JsxRuntime6.jsx("span", {
+                        children: `#` + (store.currentNumber + 1 | 0).toString(),
+                        className: "stat-value",
+                        "data-testid": "next-number"
+                      })
+                    ],
+                    className: "stat-item"
+                  }),
+                  JsxRuntime6.jsxs("div", {
+                    children: [
+                      JsxRuntime6.jsx("span", {
+                        children: "Served Today",
+                        className: "stat-label"
+                      }),
+                      JsxRuntime6.jsx("span", {
+                        children: store.servedToday.toString(),
+                        className: "stat-value",
+                        "data-testid": "served-today"
+                      })
+                    ],
+                    className: "stat-item"
+                  })
+                ],
+                className: "display-stats mt-4"
+              })
+            ],
+            className: "container"
+          })
+        ],
+        className: "page display-page",
+        "data-testid": "display-page"
+      });
+    } else {
+      return JsxRuntime6.jsx("div", {
+        children: JsxRuntime6.jsx("div", {
+          children: "Loading...",
+          className: "loading"
+        }),
+        className: "page display-page",
+        "data-testid": "display-page"
+      });
+    }
   }
   function expose9() {
     setWindowProperty("Display", Display);
@@ -1623,7 +1792,7 @@ var TakeANumber = (() => {
   var make7 = Display;
 
   // lib/es6/src/components/Landing.js
-  var React4 = __toESM(require_react(), 1);
+  var React5 = __toESM(require_react(), 1);
 
   // lib/es6/src/bindings/QRCode.js
   var defaultOptions = {
@@ -1736,21 +1905,21 @@ var TakeANumber = (() => {
     });
   }
   function Landing(props) {
-    let match = React4.useState(() => "");
+    let match = React5.useState(() => "");
     let setStoreName = match[1];
     let storeName = match[0];
-    let match$1 = React4.useState(() => {
+    let match$1 = React5.useState(() => {
     });
     let setError = match$1[1];
     let error = match$1[0];
-    let match$2 = React4.useState(() => false);
+    let match$2 = React5.useState(() => false);
     let setIsLoading = match$2[1];
     let isLoading = match$2[0];
-    let match$3 = React4.useState(() => {
+    let match$3 = React5.useState(() => {
     });
     let setCreatedStore = match$3[1];
     let createdStore = match$3[0];
-    let match$4 = React4.useState(() => "");
+    let match$4 = React5.useState(() => "");
     let setQrCodeUrl = match$4[1];
     let qrCodeUrl = match$4[0];
     let handleCreateStore = async (e) => {
@@ -2068,10 +2237,10 @@ var TakeANumber = (() => {
     };
   }
   function App$Router(props) {
-    let match = React5.useState(() => parseRoute(window.location.hash));
+    let match = React6.useState(() => parseRoute(window.location.hash));
     let setRoute = match[1];
     let route = match[0];
-    React5.useEffect(() => {
+    React6.useEffect(() => {
       let onHashChange = (param) => setRoute((param2) => parseRoute(window.location.hash));
       window.addEventListener("hashchange", onHashChange);
       return () => {
@@ -2120,15 +2289,15 @@ var TakeANumber = (() => {
     let mountApp = (function(container2) {
       var h = window.preact.h;
       var render = window.preact.render;
-      var useState6 = window.preactHooks.useState;
-      var useEffect5 = window.preactHooks.useEffect;
+      var useState7 = window.preactHooks.useState;
+      var useEffect6 = window.preactHooks.useEffect;
       var html = window.htm.bind(h);
       window.html = html;
       function Router2() {
-        var routeState = useState6(window.location.hash || "#/");
+        var routeState = useState7(window.location.hash || "#/");
         var route = routeState[0];
         var setRoute = routeState[1];
-        useEffect5(function() {
+        useEffect6(function() {
           var onHashChange = function() {
             setRoute(window.location.hash || "#/");
           };
